@@ -2,12 +2,42 @@ var fs = require('fs');
 var crowdProcess = require('..');
 var path = require('path');
 
-var programString = fs.readfileSync(path.join(__dirname,'Run.js'));
+//Load Program 
+var programSource = path.join(__dirname, 'src', 'Run.js');
+var programString = fs.readFileSync(programSource, {encoding: 'utf8'});
 
-var credentials = JSON.parse(path.join(__dirname, '../','credentials', 'flavio.sousa.json'));
+//Load credentials
+var credSource = path.join(__dirname, '../','credentials', 'flavio.sousa.json' );
+var credentials = JSON.parse( fs.readFileSync( credSource, {encoding: 'utf8'}));
 
-LOG(programString, credentials);
+var task = crowdProcess(credentials, program, err);
+if (err) throw err;
+
+//Send data units
+var numDataUnits = 10
+for (var i = 0; i < numDataUnits; i++) {
+  task.write(i);
+};
+
+//Deal with results
+task.on('results', function(results){
+  //Do stuff with result
+}
+
+task.on('acknowledge', function(acknowledge){
+  //Do stuff with acknowledge
+}
+
+task.on('fault', function(fault) {
+    //Do stuff with faults
+});
+
+task.on('drain', function() {
+    task.end();
+    console.log('Finished receiving results');
+});
+
 
 function LOG(stuff){
-  console.log('-->LOGGING: ', stuff);
+  console.log('-->LOGGING:\n ', stuff);
 }
