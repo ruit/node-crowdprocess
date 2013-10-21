@@ -1,11 +1,19 @@
 {
-  "name": "crowdprocess",
+  "name": "crp",
   "version": "0.0.0",
   "description": "Write programs with crowdprocess programmatically in an easy way",
   "main": "index.js",
   "directories": {
     "example": "example"
   },
+  "keywords": [
+    "resample",
+    "slope",
+    "aspect",
+    "raster",
+    "gis",
+    "postgis"
+  ],
   "scripts": {
     "test": "tap tests/*.js"
   },
@@ -13,6 +21,7 @@
   "license": "MIT",
   "dependencies": {
     "crp-task-client": "~0.2.2",
-    "crp-task-producer-client": "~0.1.9"
+    "crp-task-producer-client": "~0.1.9",
+    "tap": "~0.4.4"
   }
 }
