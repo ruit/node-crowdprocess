@@ -7,12 +7,9 @@
     "example": "example"
   },
   "keywords": [
-    "resample",
-    "slope",
-    "aspect",
-    "raster",
-    "gis",
-    "postgis"
+    "crowdprocess",
+    "browser",
+    "client"
   ],
   "scripts": {
     "test": "tap tests/*.js"
