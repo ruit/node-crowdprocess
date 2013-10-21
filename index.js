@@ -5,7 +5,8 @@ var fs = require('fs');
 
 module.exports = function crowdProcess(userProgram, theBid, callbaque ){
 
-  var credSource = path.join('/home/fsousa', '.crowdprocess', 'auth_token.json');
+  var credSource = path.join(process.env['HOME'], '.crowdprocess', 'auth_token.json');
+  console.log(process.env['HOME']);
   var credentials = JSON.parse( fs.readFileSync( credSource, {encoding: 'utf8'}));
 
   var client = crpTaskClient({credential: credentials});

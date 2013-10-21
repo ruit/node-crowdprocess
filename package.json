@@ -1,6 +1,6 @@
 {
-  "name": "crp",
-  "version": "0.0.0",
+  "name": "crowdprocess",
+  "version": "0.0.1",
   "description": "Write programs with crowdprocess programmatically in an easy way",
   "main": "index.js",
   "directories": {
