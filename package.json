@@ -11,6 +11,10 @@
     "browser",
     "client"
   ],
+    "repository": {
+    "type": "git",
+    "url": "git://github.com/CrowdProcess/crpEasyAsPie"
+  },
   "scripts": {
     "test": "tap tests/*.js"
   },
