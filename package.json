@@ -1,13 +1,13 @@
 {
   "name": "crowdprocess",
   "version": "0.0.0",
-  "description": "Write programs with crowdprocess programmatically in a easy way",
+  "description": "Write programs with crowdprocess programmatically in an easy way",
   "main": "index.js",
   "directories": {
     "example": "example"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tap tests/*.js"
   },
   "author": "Flávio Sousa, Igor Soarez",
   "license": "MIT",
