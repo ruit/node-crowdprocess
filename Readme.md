@@ -12,10 +12,10 @@ npm install crowdprocess
 
 The best way to explain 'how to CrowdProcess' is to get started with an example.
 We'll assume that you already installed [crowdprocess-cli](https://github.com/CrowdProcess/crp-cli) and are currently logged in. 
-You have to be logged in CrowdProcess to be able to create tasks and stream data unit ( follow the link to learn how to [login](https://github.com/CrowdProcess/crp-cli#login)).
+You have to be logged in CrowdProcess to be able to create tasks and stream data units ( follow the link to learn how to [login](https://github.com/CrowdProcess/crp-cli#login)).
 
-Let's begin with a very simple application. We have a group of string (tweets if you must) and we want to 
-know who many  occurrences of the word 'browser' we have in each. Also, we have a lot of tweets so we'll be using 
+Let's begin with a very simple application. We have a group of strings (tweets if you must) and we want to 
+know how many  occurrences of the word 'browser' we have in each. Also, we have a lot of tweets so we'll be using 
 CrowdProcess to speed up the count. 
 
 We begin with a JSON array that has all the tweets:
@@ -23,7 +23,7 @@ We begin with a JSON array that has all the tweets:
 ```javascript
 [
   "The power of connected browsers compels you",
-  "dude... latency between the browsers! And some optimizations we still need to do lol",
+  "dude...latency between the browsers! And some optimizations we still need to do lol",
   "They’ve totally surprised us with the awesome stuff they’ve done so far!",
   "10000 data units, 1800/2000 browsers. 133.8 times faster than the local machine.",
   " It is a browser based supercomputing platform. We have many browsers"
@@ -67,12 +67,11 @@ var programString = /*String with Run function*/
 crowdProcess(programString, bid, function(err, task){
 
   for (var i = 0; i < tweets.length; i++) {
-    
+
     //Data unit object
     dataUnit.s = tweets[i];
     dataUnit.w = word;
     task.write(dataUnit);
-
   }; 
 
   //Deal with results
@@ -83,7 +82,7 @@ crowdProcess(programString, bid, function(err, task){
 });
 ```
 
-This pretty much covers it all. See the working example! and get started right away.
+This pretty much covers it all. See the working [example]() and get started right away.
 
 ##Under the hood
 

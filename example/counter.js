@@ -19,7 +19,7 @@ crowdProcess(programString, bid, function(err, task){
     dataUnit.s = sentences[i];
     dataUnit.w = 'browser';
     task.write(dataUnit);
-    logIt('Sending: '+ dataUnit);
+    logIt('Sending: '+ dataUnit.s);
   };
 
   //Deal with results
@@ -29,7 +29,7 @@ crowdProcess(programString, bid, function(err, task){
   });
 
   function dealWithResults(result){
-    logIt('result: ' + result);
+    logIt('Result: Word count is ' + result );
     if (++resultCount === sentences.length){
       task.end();
       console.log('-->Finish receiving results')
@@ -38,17 +38,14 @@ crowdProcess(programString, bid, function(err, task){
 
 
   task.on('acknowledge', function(acknowledge){
-    logIt('acknowledge: ' + acknowledge);
+    logIt('Acknowledge: ' + acknowledge);
   });
 
-  task.on('fault', function(fault) {
-      logIt('faults' + fault);
-  });
-
+  task.on('fault', logIt);
   task.on('error', logIt);
 
 });
 
 function logIt(stuff){
-  console.log('-->LOGGING: ', stuff);
+  console.log('-->'+ stuff);
 }
