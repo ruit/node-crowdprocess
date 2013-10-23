@@ -6,7 +6,6 @@ var fs = require('fs');
 module.exports = function crowdProcess(userProgram, theBid, callbaque ){
 
   var credSource = path.join(process.env['HOME'], '.crowdprocess', 'auth_token.json');
-  console.log(process.env['HOME']);
   var credentials = JSON.parse( fs.readFileSync( credSource, {encoding: 'utf8'}));
 
   var client = crpTaskClient({credential: credentials});
@@ -34,10 +33,6 @@ module.exports = function crowdProcess(userProgram, theBid, callbaque ){
 
     var stream = taskProducerClient(options);
 
-    stream.on('result', function(){
-      dealWithResults(stream);
-    });
-
     //voodoo code to count sent data units
     var streamWrite = stream.write;
     stream.write = interceptWrite;
@@ -48,12 +43,4 @@ module.exports = function crowdProcess(userProgram, theBid, callbaque ){
 
     callbaque(null, stream);
   }
-
-  function dealWithResults(stream){
-    if (++resultCount === pending){
-      stream.end();
-      console.log('Finish receiving results')
-    }
-  }
-
 } 

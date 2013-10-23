@@ -26,6 +26,7 @@ test('Test Everything!!', function(t){
     function dealWithResults(result){
       sumReceived += result;
       if (++received === numDataUnits){
+        task.end();
         t.ok(sumReceived === numDataUnits*(numDataUnits+1), 'Everything is ok.');
         t.end();
       }
