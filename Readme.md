@@ -88,6 +88,6 @@ This pretty much covers it all. See the working [example](https://github.com/Cro
 
 This module is basically a wrap up for other three modules that deal with authentication, task creation and 
 data handling in CrowdProcess. If you want to learn more just follow the links:
-* [Athentication cliente](https://github.com/CrowdProcess/crp-auth-client)
+* [Athentication client](https://github.com/CrowdProcess/crp-auth-client)
 * [Task creation](https://github.com/CrowdProcess/crp-task-client) 
 * [data handling](https://github.com/CrowdProcess/crp-task-producer-client)
