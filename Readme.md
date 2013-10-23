@@ -82,7 +82,7 @@ crowdProcess(programString, bid, function(err, task){
 });
 ```
 
-This pretty much covers it all. See the working [example]() and get started right away.
+This pretty much covers it all. See the working [example](https://github.com/CrowdProcess/crpEasyAsPie/blob/master/example/counter.js) and get started right away.
 
 ##Under the hood
 
