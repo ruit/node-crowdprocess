@@ -19,7 +19,7 @@ npm install crowdprocess
 
 The best way to explain 'how to CrowdProcess' is to get started with an example.
 We'll assume that you already installed [crowdprocess-cli](https://github.com/CrowdProcess/crp-cli) and are currently logged in ([how to login through the command line interface](https://github.com/CrowdProcess/crp-cli#login)). 
-You have to be logged in CrowdProcess to be able to create tasks and stream data units .
+You have to be logged in CrowdProcess to be able to create tasks and stream dataunits .
 
 Let's begin with a very simple application. We have a group of strings (tweets in this case) and we want to 
 know how many  occurrences of the word 'browser' we have in each. Also, we have a lot of tweets so we'll be using 
@@ -32,7 +32,7 @@ We begin with a JSON array that has all the tweets:
   "The power of connected browsers compels you",
   "dude...latency between the browsers! And some optimizations we still need to do lol",
   "They’ve totally surprised us with the awesome stuff they’ve done so far!",
-  "10000 data units, 1800/2000 browsers. 133.8 times faster than the local machine.",
+  "10000 dataunits, 1800/2000 browsers. 133.8 times faster than the local machine.",
   " It is a browser based supercomputing platform. We have many browsers"
 ]
 ```
@@ -57,7 +57,7 @@ function Run(data){
 ```
 
 
-We require the module and call the crowdprocess function in a node script. Using the crowdprocess module is very simple. After requiring you only have to execute the function with a callback that receives the task stream as an argument. You'll be using this stream to write data units and read results.
+We require the module and call the crowdprocess function in a node script. Using the crowdprocess module is very simple. After requiring you only have to execute the function with a callback that receives the task stream as an argument. You'll be using this stream to write dataunits and read results.
 
 ```javascript
 var crowdprocess = require('crowdprocess');
