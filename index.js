@@ -1,46 +1,103 @@
+var authClient = require('crp-auth-client');
 var crpTaskClient = require('crp-task-client');
 var taskProducerClient = require('crp-task-producer-client');
 var path = require('path');
 var fs = require('fs');
+var Transform = require('stream').Transform;
+var util = require('util');
+var osenv = require('osenv');
 
-module.exports = function crowdProcess(userProgram, theBid, callbaque ){
+var DEBUG;
+if (process.env.NODE_ENV &&
+    process.env.NODE_ENV.toLowerCase() === 'debug')
+  DEBUG = true;
 
-  var credSource = path.join(process.env['HOME'], '.crowdprocess', 'auth_token.json');
-  var credentials = JSON.parse( fs.readFileSync( credSource, {encoding: 'utf8'}));
+var credentialLocation = path.join(osenv.home(), '.crowdprocess', 'auth_token.json');
 
-  var client = crpTaskClient({credential: credentials});
-  
-  var task = {
-    bid: theBid,
-    program: userProgram
-  };
+module.exports = CrowdProcess;
 
-  client.tasks.create(task, function(err, taskDoc){
-    if (err) throw err;
-    console.log('-->Created task with id', taskDoc._id);
-    whenTaskCreated(taskDoc._id);
-  });
+function CrowdProcess (program, bid, callback) {
+  var opts;
+  var credential;
+  if (typeof program === 'object')
+    opts = program;
+  else
+    opts = {};
 
-  var resultCount = 0;
-  var pending = 0;
-  function whenTaskCreated(theTaskID){
-
-    var options = {
-      credential: credentials,
-      taskId: theTaskID,
-      highWaterMark: 500  // default
+  if (opts.credential) {
+    credential = opts.credential;
+    createTask(program, bid, credential, onTaskCreated);
+  } else if (fs.existsSync(credentialLocation)) {
+    credential = JSON.parse(fs.readFileSync(credentialLocation, {
+      encoding: 'utf8'
+    }));
+    createTask(program, bid, credential, onTaskCreated);
+  } else if (opts.username && opts.password) {
+    authClient.login(opts.username, opts.username, onAuth);
+    function onAuth (err, cred) {
+      if (err)
+        throw err;
+      credential = cred;
+      createTask(program, bid, credential, onTaskCreated);
     }
+  }
+
+  function onTaskCreated (err, taskDoc) {
+    if (DEBUG)
+      console.log('--- created task', taskDoc._id);
+    connectStreams(taskDoc._id);
+  }
+
+  var CONNECTED;
+  function connectStreams (taskId) {
+    var options = {
+      credential: credential,
+      taskId: taskId,
+      highWaterMark: 500  // default
+    };
 
     var stream = taskProducerClient(options);
+    stream.pipe(transform)
+    transform.pipe(stream);
+    CONNECTED = true;
+    consumeQueue();
+  }
 
-    //voodoo code to count sent data units
-    var streamWrite = stream.write;
-    stream.write = interceptWrite;
-    function interceptWrite() {
-      streamWrite.apply(this, arguments);
-      ++pending;
+  var queue = [];
+  function consumeQueue () {
+    var i = queue.length;
+    if (queue && i > 0) {
+      while (i--) {
+        transform.push(queue[i]);
+      }
+    }
+  }
+
+  var transform = new Transform({
+    objectMode: true
+  });
+
+  transform._transform = function (chunk, encoding, cb) {
+    if (CONNECTED) {
+      this.push(chunk);
+      return cb();
     }
 
-    callbaque(null, stream);
-  }
-} 
+    queue.push(chunk);
+  };
+
+  return transform;
+}
+
+function createTask (program, bid, credential, cb) {
+  var client = crpTaskClient({
+    credential: credential
+  });
+  
+  var task = {
+    bid: bid,
+    program: program
+  };
+
+  client.tasks.create(task, cb);
+}
