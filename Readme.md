@@ -88,7 +88,7 @@ crowdProcess(programString, bid, function(err, task){
 });
 ```
 
-This pretty much covers it. See the working [example](https://github.com/CrowdProcess/crpEasyAsPie/blob/master/example/counter.js) to get started right away.
+This pretty much covers it. See the working [example](https://github.com/CrowdProcess/node-crowdprocess/blob/master/example/counter.js) to get started right away.
 
 ##Under the hood
 
@@ -96,4 +96,4 @@ This module is basically a wrap up for other three modules that deal with authen
 data handling in CrowdProcess. If you want to learn more check the documentation:
 * [Athentication client](https://github.com/CrowdProcess/crp-auth-client)
 * [Task creation](https://github.com/CrowdProcess/crp-task-client) 
-* [data handling](https://github.com/CrowdProcess/crp-task-producer-client)
+* [Data handling](https://github.com/CrowdProcess/crp-task-producer-client)
