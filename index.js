@@ -1,7 +1,7 @@
 var crpTaskClient = require('crp-task-client');
 var taskProducerClient = require('crp-task-producer-client');
 var path = require('path');
-var osenv = require('osenv')
+var osenv = require('osenv');
 var fs = require('fs');
 
 module.exports = function crowdProcess(userProgram, theBid, callbaque ){
