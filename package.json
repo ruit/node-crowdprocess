@@ -1,6 +1,6 @@
 {
   "name": "crowdprocess",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "description": "Write programs programmatically for crowdprocess in an easy way",
   "main": "index.js",
   "directories": {
@@ -18,7 +18,7 @@
   "scripts": {
     "test": "tap tests/*.js"
   },
-  "author": "Flávio Sousa, Igor Soarez",
+  "author": "Flávio Sousa, Igor Soarez, Pedro M. B. Afonso",
   "license": "MIT",
   "dependencies": {
     "crp-task-client": "~0.2.2",
