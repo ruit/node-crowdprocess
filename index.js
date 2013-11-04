@@ -1,11 +1,12 @@
 var crpTaskClient = require('crp-task-client');
 var taskProducerClient = require('crp-task-producer-client');
 var path = require('path');
+var osenv = require('osenv');
 var fs = require('fs');
 
 module.exports = function crowdProcess(userProgram, theBid, callbaque ){
 
-  var credSource = path.join(process.env['HOME'], '.crowdprocess', 'auth_token.json');
+  var credSource = path.join(osenv.home(), '.crowdprocess', 'auth_token.json');
   var credentials = JSON.parse( fs.readFileSync( credSource, {encoding: 'utf8'}));
 
   var client = crpTaskClient({credential: credentials});
