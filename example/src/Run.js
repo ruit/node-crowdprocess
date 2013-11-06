@@ -12,7 +12,10 @@ function Run(data){
     if (a[i].toLowerCase() === w.toLowerCase()+'s') count++;//acount plurals
   };
 
-  return count;
+  var output = {};
+  output.count = count;
+  output.sentence = s;
+  return output;
 
 }
 
