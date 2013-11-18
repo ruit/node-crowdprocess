@@ -5,7 +5,8 @@ var crowdProcess = require('..');
 var programString = fs.readFileSync('./src/Run.js', {encoding: 'utf8'});
 
 var bid = 1;
-crowdProcess(programString, bid, undefined,function(err, task){
+var group = 'stlx';
+crowdProcess(programString, bid, group, function(err, task){
 
   sendDataUnits(task);
 
