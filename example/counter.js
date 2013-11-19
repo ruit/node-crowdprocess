@@ -1,8 +1,9 @@
 var fs = require('fs');
 var crowdProcess = require('..');
+var path = require('path');
 
 //Load Program 
-var programString = fs.readFileSync('./src/Run.js', {encoding: 'utf8'});
+var programString = fs.readFileSync(path.join(__dirname,'src', 'Run.js'), {encoding: 'utf8'});
 
 var bid = 1;
 crowdProcess(programString, bid, undefined,function(err, task){

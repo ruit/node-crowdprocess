@@ -8,7 +8,7 @@ test('Test Everything!!', function(t){
   var programString = "function Run(data){ return data *2;}";
   var bid = 1;
 
-  var task = crowdProcess(programString, bid, function(err, task){
+  var task = crowdProcess(programString, bid, undefined,function(err, task){
 
     //Send data units
     var numDataUnits = 10

@@ -4,7 +4,7 @@ var path = require('path');
 var osenv = require('osenv');
 var fs = require('fs');
 
-module.exports = function crowdProcess(userProgram, theBid, callbaque ){
+module.exports = function crowdProcess(userProgram, jobBid, groupId, callback ){
 
   var credSource = path.join(osenv.home(), '.crowdprocess', 'auth_token.json');
   var credentials = JSON.parse( fs.readFileSync( credSource, {encoding: 'utf8'}));
@@ -12,7 +12,8 @@ module.exports = function crowdProcess(userProgram, theBid, callbaque ){
   var client = crpTaskClient({credential: credentials});
   
   var task = {
-    bid: theBid,
+    bid: jobBid,
+    group: groupId,
     program: userProgram
   };
 
@@ -42,6 +43,6 @@ module.exports = function crowdProcess(userProgram, theBid, callbaque ){
       ++pending;
     }
 
-    callbaque(null, stream);
+    callback(null, stream);
   }
 } 
