@@ -6,7 +6,7 @@ var path = require('path');
 var programString = fs.readFileSync(path.join(__dirname,'src', 'Run.js'), {encoding: 'utf8'});
 
 var bid = 1;
-crowdProcess(programString, bid, undefined,function(err, task){
+crowdProcess(programString, bid, undefined, function(err, task){
 
   sendDataUnits(task);
 

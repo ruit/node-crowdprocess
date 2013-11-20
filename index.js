@@ -18,7 +18,7 @@ module.exports = function crowdProcess(userProgram, jobBid, groupId, callback ){
   };
 
   client.tasks.create(task, function(err, taskDoc){
-    if (err) throw err;
+    if (err) return callback(err);
     console.log('-->Created task with id', taskDoc._id);
     whenTaskCreated(taskDoc._id);
   });
