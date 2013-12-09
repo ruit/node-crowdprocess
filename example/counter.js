@@ -8,6 +8,8 @@ var programString = fs.readFileSync(path.join(__dirname,'src', 'Run.js'), {encod
 var bid = 1;
 crowdProcess(programString, bid, undefined, function(err, task){
 
+	if (err) throw err;
+
   sendDataUnits(task);
 
   onResult(task);
