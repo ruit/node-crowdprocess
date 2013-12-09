@@ -1,48 +1,24 @@
-var crpTaskClient = require('crp-task-client');
-var taskProducerClient = require('crp-task-producer-client');
+var userHome = require('osenv').home();
 var path = require('path');
-var osenv = require('osenv');
-var fs = require('fs');
+var login = require('src/auth');
+var job = require('src/job');
 
-module.exports = function crowdProcess(userProgram, jobBid, groupId, callback ){
+module.exports = crowdprocess;
 
-  var credSource = path.join(osenv.home(), '.crowdprocess', 'auth_token.json');
-  var credentials = JSON.parse( fs.readFileSync( credSource, {encoding: 'utf8'}));
+function crowdprocess(userProgram, jobBid, groupId, callback){
 
-  var client = crpTaskClient({credential: credentials});
-  
-  var task = {
-    bid: jobBid,
-    group: groupId,
-    program: userProgram
-  };
+  var tokenPath = path.join(userHome, '.crowdprocess', 'auth_token');
+  fs.exists(tokenPath, tokenExists);
 
-  client.tasks.create(task, function(err, taskDoc){
-    if (err) return callback(err);
-    console.log('-->Created task with id', taskDoc._id);
-    whenTaskCreated(taskDoc._id);
-  });
+  function tokenExists (exists){
+    if (exists) {
+      job(userProgram, jobBid, groupId, callback);
 
-  var resultCount = 0;
-  var pending = 0;
-  function whenTaskCreated(theTaskID){
-
-    var options = {
-      credential: credentials,
-      taskId: theTaskID,
-      highWaterMark: 500  // default
+    } else {
+      login(function (){
+        job(userProgram, jobBid, groupId, callback);
+      });
     }
-
-    var stream = taskProducerClient(options);
-
-    //voodoo code to count sent data units
-    var streamWrite = stream.write;
-    stream.write = interceptWrite;
-    function interceptWrite() {
-      streamWrite.apply(this, arguments);
-      ++pending;
-    }
-
-    callback(null, stream);
   }
-} 
+
+}

@@ -24,6 +24,9 @@
     "crp-task-client": "~0.2.3",
     "crp-task-producer-client": "~0.1.9",
     "tap": "~0.4.4",
-    "osenv": "0.0.3"
+    "osenv": "0.0.3",
+    "read": "~1.0.5",
+    "crp-account-client": "git+https://github.com/CrowdProcess/crp-account-client",
+    "path": "~0.4.9"
   }
 }
