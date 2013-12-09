@@ -1,7 +1,8 @@
 var userHome = require('osenv').home();
 var path = require('path');
-var login = require('src/auth');
-var job = require('src/job');
+var login = require('./src/auth');
+var job = require('./src/job');
+var fs = require('fs');
 
 module.exports = crowdprocess;
 

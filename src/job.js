@@ -1,5 +1,5 @@
-var crpTaskClient = require('crp-task-client');
-var taskProducerClient = require('crp-task-producer-client');
+var JobClient = require('crp-job-client');
+var JobStreamClient = require('crp-stream-client');
 var path = require('path');
 var osenv = require('osenv');
 var fs = require('fs');
@@ -7,43 +7,42 @@ var error = require('./error');
 
 module.exports = function crowdProcess(userProgram, jobBid, groupId, callback ){
 
-  var credSource = path.join(osenv.home(), '.crowdprocess', 'auth_token');
-  var credentials = JSON.parse( fs.readFileSync( credSource, {encoding: 'utf8'}));
+  var tokenSource = path.join(osenv.home(), '.crowdprocess', 'auth_token.json');
+  var token = require(tokenSource);
 
-  var client = crpTaskClient({credential: credentials});
+  var job = JobClient({token: token});
   
-  var task = {
+  var program = {
     bid: jobBid,
     group: groupId,
     program: userProgram
   };
 
-  client.tasks.create(task, function(err, taskDoc){
+  job.create(program, function(err, jobDoc){
     if (err) return callback(err);
-    console.log('-->Created task with id', taskDoc._id);
-    whenTaskCreated(taskDoc._id);
+    jobId = jobDoc.id;
+    console.log('Created job with token', jobId, '...');
+    onJobCreation(jobId);
   });
 
   var resultCount = 0;
   var pending = 0;
-  function whenTaskCreated(theTaskID){
+  function onJobCreation(jobId){
 
-    var options = {
-      credential: credentials,
-      taskId: theTaskID,
-      highWaterMark: 500  // default
-    }
+    var jobStreamClient = JobStreamClient({
+      token: token,
+      jobId: jobId,
+      only: true
+    });
 
-    var stream = taskProducerClient(options);
-
-    //voodoo code to count sent data units
-    var streamWrite = stream.write;
-    stream.write = interceptWrite;
+    //voodoo code to count send data units
+    var streamWrite = jobStreamClient.write;
+    jobStreamClient.write = interceptWrite;
     function interceptWrite() {
       streamWrite.apply(this, arguments);
       ++pending;
     }
 
-    callback(null, stream);
+    callback(null, jobStreamClient);
   }
 } 

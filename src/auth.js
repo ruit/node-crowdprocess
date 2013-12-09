@@ -6,12 +6,13 @@ var path = require('path');
 
 module.exports = login;
 
-function login(callback){
+function login(username, password, callback){
 
-  getUser();
-
-  var username;
-  var password;
+  if ( username && password ){
+    getToken();
+  } else{
+    getUser();
+  }
 
   function getUser () {
 
