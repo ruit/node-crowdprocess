@@ -11,7 +11,7 @@ test('Test Job', function(t){
   crowdProcess(programString, bid, undefined, function(err, job){
 
     //Send data units
-    var numDataUnits = 1000;
+    var numDataUnits = 10;
     for (var i = 1; i <= numDataUnits; i++) {
       console.log('-->send:', i)
       job.write(i);
