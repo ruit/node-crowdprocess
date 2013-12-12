@@ -3,12 +3,18 @@ var crowdProcess = require('..');
 var path = require('path');
 var test = require('tap').test;
 
+// Get credentials
+var credentialsSrc = path.join(__dirname, 'credentials.json');
+var credentials = require(credentialsSrc);
+var email = credentials.email;
+var password = credentials.password;
+
 test('Test Job', function(t){
 
   var programString = "function Run(data){ return data *2;}";
   var bid = 1;
 
-  crowdProcess(programString, bid, undefined, function(err, job){
+  crowdProcess(programString, bid, undefined, email, password, function(err, job){
 
     //Send data units
     var numDataUnits = 10;
