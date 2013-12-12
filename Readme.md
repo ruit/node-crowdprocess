@@ -19,7 +19,7 @@ npm install crowdprocess
 
 The best way to explain 'how to CrowdProcess' is to get started with an example.
 We'll assume that you already installed [crowdprocess-cli](https://github.com/CrowdProcess/crp-cli) and are currently logged in ([how to login through the command line interface](https://github.com/CrowdProcess/crp-cli#login)). 
-You have to be logged in CrowdProcess to be able to create tasks and stream dataunits .
+You have to be logged in CrowdProcess to be able to create jobs and stream dataunits .
 
 Let's begin with a very simple application. We have a group of strings (tweets in this case) and we want to 
 know how many  occurrences of the word 'browser' we have in each. Also, we have a lot of tweets so we'll be using 
@@ -63,7 +63,7 @@ function Run(data){
 ```
 
 
-We require the module and call the crowdprocess function in a node script. Using the crowdprocess module is very simple. After requiring you only have to execute the function with a callback that receives the task stream as an argument. You'll be using this stream to write dataunits and read results.
+We require the module and call the crowdprocess function in a node script. Using the crowdprocess module is very simple. After requiring you only have to execute the function with a callback that receives the job stream as an argument. You'll be using this stream to write dataunits and read results.
 
 ```javascript
 var crowdprocess = require('..');
@@ -145,8 +145,8 @@ This pretty much covers it. See the working [example](https://github.com/CrowdPr
 
 ##Under the hood
 
-This module is basically a wrap up for other three modules that deal with authentication, task creation and 
+This module is basically a wrap up for other three modules that deal with authentication, job creation and 
 data handling in CrowdProcess. If you want to learn more check the documentation:
-* [Athentication client](https://github.com/CrowdProcess/crp-auth-client)
-* [Task creation](https://github.com/CrowdProcess/crp-task-client) 
-* [Data handling](https://github.com/CrowdProcess/crp-task-producer-client)
+* [Athentication client](https://github.com/CrowdProcess/crp-account-client)
+* [Job creation](https://github.com/CrowdProcess/crp-job-client) 
+* [Data handling](https://github.com/CrowdProcess/crp-stream-client)
