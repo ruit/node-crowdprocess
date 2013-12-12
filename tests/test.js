@@ -17,26 +17,26 @@ test('Test Job', function(t){
 
     // Input stream (create tasks)
     var nTasks = 10;
+    var rcvdTotal = 0,
+        rcvdErrors = 0,
+        rcvdResults = 0;
+
     for (var i = 1; i <= nTasks; i++) {
       console.log('-->send:', i)
       job.write(i);
     };
-    job.end();
-
-    var rcvdTotal = 0,
-        rcvdErrors = 0,
-        rcvdResults = 0;
+    job.end(); // End input stream
 
     // Output stream (receive results and errors)
     job.on('data' , handleResult);
     job.on('error', handleError );
 
     function handleResult (result) {
-      rcvdResults++;
-      rcvdTotal = rcvdErrors + rcvdResults;
+      rcvdTotal = ++rcvdResults + rcvdErrors;
       console.log(' > result:', rcvdResults);
+      
       if (rcvdTotal === nTasks){
-        job.destroy();
+        job.destroy(); // Destroy stream
         t.ok(rcvdTotal === nTasks, 'Received errors and results equals number of tasks.');
         t.end();
       }
