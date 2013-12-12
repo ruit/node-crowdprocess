@@ -21,11 +21,11 @@
   "author": "Flávio Sousa, Igor Soarez, Pedro Afonso",
   "license": "MIT",
   "dependencies": {
-    "crp-auth-client": "git://github.com/CrowdProcess/crp-auth-client.git",
-    "crp-task-client": "git+https://github.com/CrowdProcess/crp-task-client.git#2",
+    "crp-account-client": "git://github.com/CrowdProcess/crp-account-client.git",
+    "crp-job-client": "git+https://github.com/CrowdProcess/crp-job-client.git",
+    "crp-stream-client": "git+https://github.com/CrowdProcess/crp-stream-client.git",
     "osenv": "0.0.3",
     "read": "~1.0.5",
-    "crp-account-client": "git+https://github.com/CrowdProcess/crp-account-client",
     "path": "~0.4.9"
   },
   "devDependencies": {

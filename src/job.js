@@ -1,48 +1,47 @@
 var JobClient = require('crp-job-client');
 var JobStreamClient = require('crp-stream-client');
+
 var path = require('path');
 var osenv = require('osenv');
 var fs = require('fs');
 var error = require('./error');
 
-module.exports = function crowdProcess(userProgram, jobBid, groupId, callback ){
+module.exports = function crowdProcess(program, bid, group, callback ){
 
   var tokenSource = path.join(osenv.home(), '.crowdprocess', 'auth_token.json');
   var token = require(tokenSource);
 
-  var job = JobClient({token: token});
+  var credentials = {token: token}
+  console.log(credentials)
+  var jobs = JobClient(credentials);
+  var jobStreamClient = JobStreamClient(credentials);
   
-  var program = {
-    bid: jobBid,
-    group: groupId,
-    program: userProgram
+  var settings = {
+    bid: bid,
+    group: group,
+    program: program
   };
 
-  job.create(program, function(err, jobDoc){
+  var jobId;
+  jobs.create(settings, function(err, job){
+    console.log('>>>', err);
     if (err) return callback(err);
-    jobId = jobDoc.id;
+    jobId = job.id;
     console.log('Created job with token', jobId, '...');
     onJobCreation(jobId);
   });
+
 
   var resultCount = 0;
   var pending = 0;
   function onJobCreation(jobId){
 
-    var jobStreamClient = JobStreamClient({
-      token: token,
-      jobId: jobId,
-      only: true
+    var duplex = jobStreamClient(jobId).Duplex({
+      timeout: '3000ms'
     });
+    console.log('>>',duplex);
+    console.log('>>',jobStreamClient(jobId));
 
-    //voodoo code to count send data units
-    var streamWrite = jobStreamClient.write;
-    jobStreamClient.write = interceptWrite;
-    function interceptWrite() {
-      streamWrite.apply(this, arguments);
-      ++pending;
-    }
-
-    callback(null, jobStreamClient);
+    callback(null, duplex);
   }
 } 

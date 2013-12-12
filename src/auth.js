@@ -6,9 +6,9 @@ var path = require('path');
 
 module.exports = login;
 
-function login(username, password, callback){
+function login(email, password, callback){
 
-  if ( username && password ){
+  if ( email && password ){
     getToken();
   } else{
     getUser();
@@ -16,8 +16,8 @@ function login(username, password, callback){
 
   function getUser () {
 
-    read({prompt: "Username:"}, function (err, user) {
-      username = user;
+    read({prompt: "Email:"}, function (err, user) {
+      email = user;
       getPass();
     });
   }
@@ -33,7 +33,7 @@ function login(username, password, callback){
     var client = AccountClient();
 
     client.login({
-      email: username,
+      email: email,
       password: password
     }, onLogin);
 
