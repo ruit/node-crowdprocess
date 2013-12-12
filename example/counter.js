@@ -1,34 +1,40 @@
-var fs = require('fs');
-var crowdProcess = require('..');
-var path = require('path');
+var crowdprocess = require('..');
+
+var path = require ('path');
+var fs = require ('fs');
 
 //Load Program 
 var programString = fs.readFileSync(path.join(__dirname,'src', 'Run.js'), {encoding: 'utf8'});
 
 var bid = 1;
-crowdProcess(programString, bid, undefined, function(err, task){
+
+// Get credentials
+var credentialsSrc = path.join(__dirname, 'credentials.json');
+var credentials = require(credentialsSrc);
+var email = credentials.email;
+var password = credentials.password;
+
+crowdprocess(programString, bid, undefined, email, password, function(err, job){
 
 	if (err) throw err;
 
-  sendDataUnits(task);
+  sendDataUnits(job);
 
-  onResult(task);
+  onResult(job);
 
-  onAcknowledge(task);
-
-  onErrors(task);
+  onErrors(job);
 
 });
 
 var sentences = require('./src/data.json');
-function sendDataUnits(task){
+function sendDataUnits(job){
 
   var word = 'browser';
 
   for (var i = 0; i < sentences.length; i++) {
 
     var dataUnit = buildDataUnit(sentences[i], word);
-    task.write(dataUnit);
+    job.write(dataUnit);
 
   }
 }
@@ -40,28 +46,21 @@ function buildDataUnit(sentence, word){
   return dataUnit;on
 }
 
-function onAcknowledge(task){
-  task.on('acknowledge', function(acknowledge){
-    logIt('Acknowledge: ' + acknowledge);
-  });
-}
-
 var resultCount = 0;
-function onResult(task){
+function onResult(job){
 
-  task.on('result', function(result){
+  job.on('data', function(result){
 
     logIt('Result:'+ JSON.stringify(result) );
     if (++resultCount === sentences.length){
-      task.end();
+      job.end();
       console.log('-->Finish receiving results')
     }
   });
 }
 
-function onErrors(task){
-  task.on('fault', logError);
-  task.on('error', logError);
+function onErrors(job){
+  job.on('error', logError);
 }
 
 function logIt(stuff){

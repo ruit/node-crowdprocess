@@ -8,7 +8,7 @@ var AccountClient = require('crp-account-client');
 
 module.exports = crowdprocess;
 
-function crowdprocess(program, bid, group, username, password, callback){
+function crowdprocess(program, bid, group, email, password, callback){
 
   var tokenPath = path.join(userHome, '.crowdprocess', 'auth_token.json');
   fs.exists(tokenPath, tokenExists);
@@ -17,7 +17,7 @@ function crowdprocess(program, bid, group, username, password, callback){
     if (exists) {
       job(program, bid, group, callback);
     } else {
-      login(username, password, function (){
+      login(email, password, function (){
         job(program, bid, group, callback);
       });
     }

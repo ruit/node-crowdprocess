@@ -62,15 +62,18 @@ We require the module and call the crowdprocess function in a node script. Using
 ```javascript
 var crowdprocess = require('crowdprocess');
 
+var email = "";
+var password = "";
+
 var tweets = [/*array with all the tweets*/];
 var word = 'browser';
 
 //Task bid
 var bid = 1;
 
-var programString = /*String with Run function*/
+var program = /*String with Run function*/
 
-crowdProcess(programString, bid, function(err, task){
+crowdprocess(program, bid, group, email, password, function(err, task){
 
   for (var i = 0; i < tweets.length; i++) {
 
