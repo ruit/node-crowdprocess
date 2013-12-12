@@ -9,11 +9,18 @@ var credentials = require(credentialsSrc);
 var email = credentials.email;
 var password = credentials.password;
 
-test('Test Job', function(t){
+test('Create job.', function(t){
   var programString = "function Run(data){ return data *2;}";
   var bid = 1;
 
   crowdProcess(programString, bid, undefined, email, password, function(err, job){
+
+    if (err) {
+      t.notOk(err.status == 401, 'Autentication failed.');
+      t.notOk(true, 'Error.');
+      t.end();
+      return console.warn(err.message);
+    }
 
     // Input stream (create tasks)
     var nTasks = 10;
@@ -22,7 +29,7 @@ test('Test Job', function(t){
         rcvdResults = 0;
 
     for (var i = 1; i <= nTasks; i++) {
-      console.log('-->send:', i)
+      console.log(' > send:', i)
       job.write(i);
     };
     job.end(); // End input stream
@@ -34,7 +41,7 @@ test('Test Job', function(t){
     function handleResult (result) {
       rcvdTotal = ++rcvdResults + rcvdErrors;
       console.log(' > result:', rcvdResults);
-      
+
       if (rcvdTotal === nTasks){
         job.destroy(); // Destroy stream
         t.ok(rcvdTotal === nTasks, 'Received errors and results equals number of tasks.');

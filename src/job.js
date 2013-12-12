@@ -12,7 +12,6 @@ module.exports = function crowdProcess(program, bid, group, callback ){
   var token = require(tokenSource);
 
   var credentials = {token: token}
-  console.log(credentials)
   var jobs = JobClient(credentials);
   var jobStreamClient = JobStreamClient(credentials);
   
@@ -24,7 +23,6 @@ module.exports = function crowdProcess(program, bid, group, callback ){
 
   var jobId;
   jobs.create(settings, function(err, job){
-    console.log('>>>', err);
     if (err) return callback(err);
     jobId = job.id;
     console.log('Created job with token', jobId, '...');
@@ -39,8 +37,6 @@ module.exports = function crowdProcess(program, bid, group, callback ){
     var duplex = jobStreamClient(jobId).Duplex({
       timeout: '3000ms'
     });
-    console.log('>>',duplex);
-    console.log('>>',jobStreamClient(jobId));
 
     callback(null, duplex);
   }

@@ -4,6 +4,7 @@ var login = require('./src/auth');
 var job = require('./src/job');
 var fs = require('fs');
 
+var AccountClient = require('crp-account-client');
 
 module.exports = crowdprocess;
 
