@@ -6,8 +6,10 @@ var path = require('path');
 //Load Program 
 var programString = fs.readFileSync(path.join(__dirname,'src', 'Run.js'), {encoding: 'utf8'});
 
-
+// Job bid (currently not being used)
 var bid = 1;
+
+// Job group (for private grid purposes)
 var group = 'stlx';
 
 // Get credentials
