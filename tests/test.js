@@ -13,7 +13,7 @@ test('Create job.', function(t){
   var programString = "function Run(data){ return data *2;}";
   var bid = 1;
 
-  crowdProcess(programString, bid, undefined, email, password, function(err, job){
+  crowdProcess(programString, bid, group, email, password, function(err, job){
 
     if (err) {
       t.notOk(err.status == 401, 'Autentication failed.');

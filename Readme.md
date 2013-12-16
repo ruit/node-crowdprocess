@@ -77,13 +77,17 @@ var programString = fs.readFileSync(path.join(__dirname,'src', 'Run.js'), {encod
 // Job bid (currently not being used)
 var bid = 1;
 
+// Crowdprocess processing group. Public is default
+var group = 'public';
+
 // Get credentials
 var credentialsSrc = path.join(__dirname, 'credentials.json');
 var credentials = require(credentialsSrc);
 var email = credentials.email;
 var password = credentials.password;
 
-crowdprocess(programString, bid, undefined, email, password, function(err, job){
+
+crowdprocess(programString, bid, group, email, password, function(err, job){
 
   if (err) throw err;
 
