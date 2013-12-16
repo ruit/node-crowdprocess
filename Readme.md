@@ -31,7 +31,7 @@ We begin with a JSON array that has all the tweets:
 [
   "The power of connected browsers compels you",
   "dude...latency between the browsers! And some optimizations we still need to do lol",
-  "They’ve totally surprised us with the awesome stuff they’ve done so far!",
+  "They've totally surprised us with the awesome stuff they've done so far!",
   "10000 dataunits, 1800/2000 browsers. 133.8 times faster than the local machine.",
   " It is a browser based supercomputing platform. We have many browsers"
 ]
