@@ -1,10 +1,8 @@
 var userHome = require('osenv').home();
 var path = require('path');
-var login = require('./src/auth');
+var login = require('./src/login');
 var job = require('./src/job');
 var fs = require('fs');
-
-var AccountClient = require('crp-account-client');
 
 module.exports = crowdprocess;
 

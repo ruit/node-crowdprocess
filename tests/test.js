@@ -4,7 +4,7 @@ var path = require('path');
 var test = require('tap').test;
 
 // Get credentials
-var credentialsSrc = path.join(__dirname, 'credentials.json');
+var credentialsSrc = path.join(__dirname, '../', 'credentials.json');
 var credentials = require(credentialsSrc);
 var email = credentials.email;
 var password = credentials.password;
@@ -12,6 +12,7 @@ var password = credentials.password;
 test('Create job.', function(t){
   var programString = "function Run(data){ return data *2;}";
   var bid = 1;
+  var group = 'public';
 
   crowdProcess(programString, bid, group, email, password, function(err, job){
 

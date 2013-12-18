@@ -4,9 +4,8 @@ var JobStreamClient = require('crp-stream-client');
 var path = require('path');
 var osenv = require('osenv');
 var fs = require('fs');
-var error = require('./error');
 
-module.exports = function crowdProcess(program, bid, group, callback ){
+module.exports = function job(program, bid, group, callback ){
 
   var tokenSource = path.join(osenv.home(), '.crowdprocess', 'auth_token.json');
   var token = require(tokenSource);
@@ -25,13 +24,10 @@ module.exports = function crowdProcess(program, bid, group, callback ){
   jobs.create(settings, function(err, job){
     if (err) return callback(err);
     jobId = job.id;
-    console.log('Created job with token', jobId, '...');
+    console.log('Created job with Id', jobId, '...');
     onJobCreation(jobId);
   });
 
-
-  var resultCount = 0;
-  var pending = 0;
   function onJobCreation(jobId){
 
     var duplex = jobStreamClient(jobId).Duplex({

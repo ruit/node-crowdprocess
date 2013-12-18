@@ -9,15 +9,17 @@ var programString = fs.readFileSync(path.join(__dirname,'src', 'Run.js'), {encod
 // Job bid (currently not being used)
 var bid = 1;
 
+//Default group is 'public' 
+var group = 'public';
+
 // Get credentials
-var credentialsSrc = path.join(__dirname, 'credentials.json');
-var credentials = require(credentialsSrc);
+var credentials = require('../credentials.json');
 var email = credentials.email;
 var password = credentials.password;
 
-crowdprocess(programString, bid, undefined, email, password, function(err, job){
+crowdprocess(programString, bid, group, email, password, function(err, job){
 
-	if (err) throw err;
+  if (err) throw err;
 
   sendDataUnits(job);
 
@@ -44,30 +46,28 @@ function buildDataUnit(sentence, word){
   var dataUnit = {};
   dataUnit.s = sentence;
   dataUnit.w = 'browser';
-  return dataUnit;on
+  return dataUnit;
 }
 
 var resultCount = 0;
+var errorCount = 0;
 function onResult(job){
-
   job.on('data', function(result){
-
-    logIt('Result:'+ JSON.stringify(result) );
-    if (++resultCount === sentences.length){
-      job.end();
-      console.log('-->Finish receiving results')
-    }
+    console.log('Result:', JSON.stringify(result) );
+    rendezVous(job);
   });
 }
 
 function onErrors(job){
-  job.on('error', logError);
+  job.on('error', function (error ){ 
+    console.log(error);
+    rendezVous(job);
+  });
 }
 
-function logIt(stuff){
-  console.log('-->'+ stuff);
-}
-
-function logError(err){
-  console.error(err);
+function rendezVous (job) {
+  if (++resultCount + errorCount === sentences.length){
+    job.end();
+    console.log('Finish receiving results.');
+  }
 }
