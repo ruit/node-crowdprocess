@@ -73,7 +73,7 @@ You have to provide your username and password to the crowdprocess module. You c
 We require the module and call the crowdprocess function in a node script. Using the crowdprocess module is very simple. After requiring you only have to execute the function with a callback that receives the job stream as an argument. You'll be using this stream to write dataunits and read results.
 
 ```javascript
-var crowdprocess = require('..');
+var crowdprocess = require('crowdprocess');
 
 var path = require ('path');
 var fs = require ('fs');
@@ -105,6 +105,7 @@ crowdprocess(programString, bid, group, email, password, function(err, job){
   onErrors(job);
 
 });
+
 var sentences = require('./src/data.json');
 function sendDataUnits(job){
 
@@ -130,6 +131,7 @@ var errorCount = 0;
 function onResult(job){
   job.on('data', function(result){
     console.log('Result:', JSON.stringify(result) );
+    ++resultCount;
     rendezVous(job);
   });
 }
@@ -137,13 +139,14 @@ function onResult(job){
 function onErrors(job){
   job.on('error', function (error ){ 
     console.log(error);
+    ++errorCount;
     rendezVous(job);
   });
 }
 
 function rendezVous (job) {
-  if (++resultCount + errorCount === sentences.length){
-    job.end();
+  if (resultCount + errorCount === sentences.length) {
+    job.destroy();
     console.log('Finish receiving results.');
   }
 }

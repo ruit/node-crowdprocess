@@ -54,6 +54,7 @@ var errorCount = 0;
 function onResult(job){
   job.on('data', function(result){
     console.log('Result:', JSON.stringify(result) );
+    ++resultCount;
     rendezVous(job);
   });
 }
@@ -61,13 +62,14 @@ function onResult(job){
 function onErrors(job){
   job.on('error', function (error ){ 
     console.log(error);
+    ++errorCount;
     rendezVous(job);
   });
 }
 
 function rendezVous (job) {
-  if (++resultCount + errorCount === sentences.length){
-    job.end();
+  if (resultCount + errorCount === sentences.length) {
+    job.destroy();
     console.log('Finish receiving results.');
   }
 }
