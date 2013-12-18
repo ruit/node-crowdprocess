@@ -17,9 +17,7 @@ npm install crowdprocess
 
 ##Getting started
 
-The best way to explain 'how to CrowdProcess' is to get started with an example.
-We'll assume that you already installed [crowdprocess-cli](https://github.com/CrowdProcess/crp-cli) and are currently logged in ([how to login through the command line interface](https://github.com/CrowdProcess/crp-cli#login)). 
-You have to be logged in CrowdProcess to be able to create jobs and stream dataunits .
+The best way to explain 'how to CrowdProcess' is to get started with an example. 
 
 Let's begin with a very simple application. We have a group of strings (tweets in this case) and we want to 
 know how many  occurrences of the word 'browser' we have in each. Also, we have a lot of tweets so we'll be using 
@@ -60,6 +58,15 @@ function Run(data){
   return output;
 }
 
+```
+
+You have to provide your username and password to the crowdprocess module. You can store it in `credentials.json`.
+
+```javascript
+{
+  "email": "user@email.com",
+  "password": "password"
+}
 ```
 
 

@@ -1,6 +1,6 @@
   {
   "name": "crowdprocess",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Write programs programmatically for crowdprocess in an easy way",
   "main": "index.js",
   "directories": {
