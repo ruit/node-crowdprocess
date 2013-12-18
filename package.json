@@ -1,6 +1,6 @@
   {
   "name": "crowdprocess",
-  "version": "0.3.5",
+  "version": "0.3.7",
   "description": "Write programs programmatically for crowdprocess in an easy way",
   "main": "index.js",
   "directories": {
@@ -21,9 +21,9 @@
   "author": "Flávio Sousa, Igor Soarez, Pedro Afonso",
   "license": "MIT",
   "dependencies": {
-    "crp-account-client": "git://github.com/CrowdProcess/crp-account-client.git",
-    "crp-job-client": "git+https://github.com/CrowdProcess/crp-job-client.git",
-    "crp-stream-client": "git+https://github.com/CrowdProcess/crp-stream-client.git",
+    "crp-account-client": "*",
+    "crp-job-client": "*",
+    "crp-stream-client": "*",
     "osenv": "0.0.3",
     "read": "~1.0.5",
     "path": "~0.4.9"
