@@ -98,7 +98,6 @@ crowdprocess(programString, bid, group, email, password, function(err, job){
   onErrors(job);
 
 });
-
 var sentences = require('./src/data.json');
 function sendDataUnits(job){
 
@@ -116,32 +115,30 @@ function buildDataUnit(sentence, word){
   var dataUnit = {};
   dataUnit.s = sentence;
   dataUnit.w = 'browser';
-  return dataUnit;on
+  return dataUnit;
 }
 
 var resultCount = 0;
+var errorCount = 0;
 function onResult(job){
-
   job.on('data', function(result){
-
-    logIt('Result:'+ JSON.stringify(result) );
-    if (++resultCount === sentences.length){
-      job.end();
-      console.log('-->Finish receiving results')
-    }
+    console.log('Result:', JSON.stringify(result) );
+    rendezVous(job);
   });
 }
 
 function onErrors(job){
-  job.on('error', logError);
+  job.on('error', function (error ){ 
+    console.log(error);
+    rendezVous(job);
+  });
 }
 
-function logIt(stuff){
-  console.log('-->'+ stuff);
-}
-
-function logError(err){
-  console.error(err);
+function rendezVous (job) {
+  if (++resultCount + errorCount === sentences.length){
+    job.end();
+    console.log('Finish receiving results.');
+  }
 }
 ```
 
