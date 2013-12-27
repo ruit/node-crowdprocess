@@ -23,7 +23,7 @@
   "dependencies": {
     "crp-account-client": "*",
     "crp-job-client": "*",
-    "crp-stream-client": "*",
+    "crp-stream-client": "git://github.com/CrowdProcess/crp-stream-client",
     "osenv": "0.0.3",
     "read": "~1.0.5",
     "path": "~0.4.9"
