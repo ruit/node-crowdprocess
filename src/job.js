@@ -31,7 +31,7 @@ module.exports = function job(program, bid, group, callback ){
   function onJobCreation(jobId){
 
     var duplex = jobStreamClient(jobId).Duplex({
-      timeout: '3000ms'
+      timeout: '10000ms'
     });
 
     callback(null, duplex);

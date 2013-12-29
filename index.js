@@ -10,8 +10,9 @@ function crowdprocess(program, bid, group, email, password, callback){
 
   if ( group === 'public' ) {
     group = undefined;
-  } else {
-    callback('Group does not exist', null);
+   } 
+  else {
+    console.log('Using group:', group);
   }
 
   var tokenPath = path.join(userHome, '.crowdprocess', 'auth_token.json');

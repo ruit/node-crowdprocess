@@ -1,26 +1,25 @@
 var crowdprocess = require('..');
 
-var fs = require('fs');
-var path = require('path');
+var path = require ('path');
+var fs = require ('fs');
 
-//Load Program 
+// Load Program 
 var programString = fs.readFileSync(path.join(__dirname,'src', 'Run.js'), {encoding: 'utf8'});
 
 // Job bid (currently not being used)
 var bid = 1;
 
-// Job group (for private grid purposes)
+//Default group is 'public' 
 var group = 'stlx';
 
 // Get credentials
-var credentialsSrc = path.join(__dirname, 'credentials.json');
-var credentials = require(credentialsSrc);
+var credentials = require('../credentials.json');
 var email = credentials.email;
 var password = credentials.password;
 
 crowdprocess(programString, bid, group, email, password, function(err, job){
 
-  if (err) {logError(err);}
+  if (err) throw err;
 
   sendDataUnits(job);
 
@@ -41,37 +40,36 @@ function sendDataUnits(job){
     job.write(dataUnit);
 
   }
-  job.end();
 }
 
 function buildDataUnit(sentence, word){
   var dataUnit = {};
   dataUnit.s = sentence;
   dataUnit.w = 'browser';
-  return dataUnit;on
+  return dataUnit;
 }
 
 var resultCount = 0;
+var errorCount = 0;
 function onResult(job){
-
   job.on('data', function(result){
-
-    logIt('Result:'+ JSON.stringify(result) );
-    if (++resultCount === sentences.length){
-      console.log('-->Finish receiving results');
-      job.destroy();
-    }
+    console.log('Result:', JSON.stringify(result) );
+    ++resultCount;
+    rendezVous(job);
   });
 }
 
 function onErrors(job){
-  job.on('error', logError);
+  job.on('error', function (error ){ 
+    console.log(error);
+    ++errorCount;
+    rendezVous(job);
+  });
 }
 
-function logIt(stuff){
-  console.log('-->'+ stuff);
-}
-
-function logError(err){
-  console.error(err);
+function rendezVous (job) {
+  if (resultCount + errorCount === sentences.length) {
+    job.destroy();
+    console.log('Finish receiving results.');
+  }
 }
