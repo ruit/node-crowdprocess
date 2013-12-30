@@ -1,29 +1,54 @@
-var userHome = require('osenv').home();
-var path = require('path');
-var login = require('./src/login');
-var job = require('./src/job');
-var fs = require('fs');
+var JobClient = require('crp-job-client');
+var StreamClient = require('crp-stream-client');
 
-module.exports = crowdprocess;
+module.exports = CrowdProcess;
 
-function crowdprocess(program, bid, group, email, password, callback){
+function CrowdProcess(email, password) {
+  var jobs = JobClient({
+    email: email,
+    password: password
+  });
+  var streams = StreamClient({
+    email: email,
+    password: password
+  });
 
-  if ( group === 'public' ) {
-    group = undefined;
-  } else {
-    callback('Group does not exist', null);
-  }
+  function map(program, data, results) {
+    if (typeof program !== 'string' && typeof program.toString === 'function')
+      program = program.toString();
 
-  var tokenPath = path.join(userHome, '.crowdprocess', 'auth_token.json');
-  fs.exists(tokenPath, tokenExists);
+    jobs.create({ program: program }, function (err, res) {
+      if (err) throw err;
 
-  function tokenExists (exists){
-    if (exists) {
-      job(program, bid, group, callback);
-    } else {
-      login(email, password, function (){
-        job(program, bid, group, callback);
+      var id = res.id;
+
+      var numResults = 0;
+      var resultStream = streams(id).Results({ stream: true });
+      resultStream.on('data', function(result) {
+        numResults++;
+        if (numResults == data.length) {
+          resultStream.end();
+          errorStream.end();
+        }
+        results(result);
       });
-    }
+
+      var errorStream = streams(id).Errors({ stream: true });
+      errorStream.on('data', function(error) {
+        numResults++;
+        if (numResults == data.length) {
+          errorStream.end();
+          resultStream.end();
+        }
+      });
+
+      var taskStream = streams(id).Tasks();
+      for (var i=0; i < data.length; i++) {
+        taskStream.write(data[i]);
+      }
+      taskStream.end();
+    });
   }
+
+  this.map = map;
 }
