@@ -1,3 +1,4 @@
+var Stream = require('stream');
 var JobClient = require('crp-job-client');
 var StreamClient = require('crp-stream-client');
 
@@ -21,12 +22,14 @@ function CrowdProcess(email, password) {
       if (err) throw err;
 
       var id = res.id;
-
+      var numTasks = 0;
       var numResults = 0;
+      var inputClosed = false;
+
       var resultStream = streams(id).Results({ stream: true });
       resultStream.on('data', function(result) {
         numResults++;
-        if (numResults == data.length) {
+        if (inputClosed && numResults == numTasks) {
           resultStream.end();
           errorStream.end();
         }
@@ -36,17 +39,36 @@ function CrowdProcess(email, password) {
       var errorStream = streams(id).Errors({ stream: true });
       errorStream.on('data', function(error) {
         numResults++;
-        if (numResults == data.length) {
+        if (inputClosed && numResults == numTasks) {
           errorStream.end();
           resultStream.end();
         }
       });
 
       var taskStream = streams(id).Tasks();
-      for (var i=0; i < data.length; i++) {
-        taskStream.write(data[i]);
+      taskStream.on('end', function() {
+        inputClosed = true;
+        if (inputClosed && numResults == numTasks) {
+          errorStream.end();
+          resultStream.end();
+        }
+      });
+      if (data instanceof Stream) {
+        data.on('data', function(d) {
+          taskStream.write(d);
+          numTasks++;
+        });
+
+        data.on('end', function() {
+          taskStream.end();
+        });
+      } else {
+        for (var i=0; i < data.length; i++) {
+          taskStream.write(data[i]);
+          numTasks++;
+        }
+        taskStream.end();
       }
-      taskStream.end();
     });
   }
 
