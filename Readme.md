@@ -158,6 +158,6 @@ This pretty much covers it. See the working [example](https://github.com/CrowdPr
 
 This module is basically a wrap up for other three modules that deal with authentication, job creation and 
 data handling in CrowdProcess. If you want to learn more check the documentation:
-* [Athentication client](https://github.com/CrowdProcess/crp-account-client)
+* [Authentication client](https://github.com/CrowdProcess/crp-account-client)
 * [Job creation](https://github.com/CrowdProcess/crp-job-client) 
 * [Data handling](https://github.com/CrowdProcess/crp-stream-client)
