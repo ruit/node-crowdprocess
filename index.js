@@ -14,11 +14,18 @@ function CrowdProcess(email, password) {
     password: password
   });
 
+  this.group = undefined;
+  this.bid = 1;
+
   function map(program, data, results) {
     if (typeof program !== 'string' && typeof program.toString === 'function')
       program = program.toString();
 
-    jobs.create({ program: program }, function (err, res) {
+    jobs.create({
+      program: program,
+      group: this.group,
+      bid: this.bid
+    }, function (err, res) {
       if (err) throw err;
 
       var id = res.id;
