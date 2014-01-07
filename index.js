@@ -14,9 +14,6 @@ function CrowdProcess(email, password) {
     password: password
   });
 
-  this.group = undefined;
-  this.bid = 1;
-
   function map(program, data, results) {
     if (typeof program !== 'string' && typeof program.toString === 'function')
       program = program.toString();
@@ -79,5 +76,7 @@ function CrowdProcess(email, password) {
     });
   }
 
+  this.group = undefined;
+  this.bid = 1;
   this.map = map;
 }
