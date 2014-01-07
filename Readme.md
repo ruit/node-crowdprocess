@@ -63,7 +63,7 @@ var CrowdProcess = require('crowdprocess');
 
 var crp = new CrowdProcess('email@example.com', 'password');
 
-crp.map(Run, data, function(result) {
+crp.map(Run, data, function(err, result) {
   console.log(result);
 });
 ```

@@ -37,7 +37,7 @@ function CrowdProcess(email, password) {
           resultStream.end();
           errorStream.end();
         }
-        results(result);
+        results(null, result);
       });
 
       var errorStream = streams(id).Errors({ stream: true });
@@ -47,6 +47,7 @@ function CrowdProcess(email, password) {
           errorStream.end();
           resultStream.end();
         }
+        results(error, null);
       });
 
       var taskStream = streams(id).Tasks();
