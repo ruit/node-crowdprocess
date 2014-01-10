@@ -1,8 +1,8 @@
 #CrowdProcess
 
-[![CrowdProcess](http://crowdprocess.com/img/crowdprocess-logo-symbol.svg)](http://crowdprocess.com/)
+[![CrowdProcess](https://crowdprocess.com/img/crowdprocess-logo-symbol.svg)](https://crowdprocess.com/)
 
-[CrowdProcess](http://crowdprocess.com/) is a browser-powered distributed computing platform.
+[CrowdProcess](https://crowdprocess.com/) is a browser-powered distributed computing platform.
 The platform connects with our partner websites and they supply it with their viewers' browsers' processing power using an [HTML5 Web Worker](https://developer.mozilla.org/en-US/docs/Web/Guide/Performance/Using_web_workers).
 
 CrowdProcess then makes that processing power available to it's users.
