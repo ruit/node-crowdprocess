@@ -1,30 +1,83 @@
-var userHome = require('osenv').home();
-var path = require('path');
-var login = require('./src/login');
-var job = require('./src/job');
-var fs = require('fs');
+var Stream = require('stream');
+var JobClient = require('crp-job-client');
+var StreamClient = require('crp-stream-client');
 
-module.exports = crowdprocess;
+module.exports = CrowdProcess;
 
-function crowdprocess(program, bid, group, email, password, callback){
+function CrowdProcess(email, password) {
+  var jobs = JobClient({
+    email: email,
+    password: password
+  });
+  var streams = StreamClient({
+    email: email,
+    password: password
+  });
 
-  if ( group === 'public' ) {
-    group = undefined;
-   } 
-  else {
-    console.log('Using group:', group);
-  }
+  function map(program, data, results) {
+    if (typeof program !== 'string' && typeof program.toString === 'function')
+      program = program.toString();
 
-  var tokenPath = path.join(userHome, '.crowdprocess', 'auth_token.json');
-  fs.exists(tokenPath, tokenExists);
+    jobs.create({
+      program: program,
+      group: this.group,
+      bid: this.bid
+    }, function (err, res) {
+      if (err) throw err;
 
-  function tokenExists (exists){
-    if (exists) {
-      job(program, bid, group, callback);
-    } else {
-      login(email, password, function (){
-        job(program, bid, group, callback);
+      var id = res.id;
+      var numTasks = 0;
+      var numResults = 0;
+      var inputClosed = false;
+
+      var resultStream = streams(id).Results({ stream: true });
+      resultStream.on('data', function(result) {
+        numResults++;
+        if (inputClosed && numResults == numTasks) {
+          resultStream.end();
+          errorStream.end();
+        }
+        results(null, result);
       });
-    }
+
+      var errorStream = streams(id).Errors({ stream: true });
+      errorStream.on('data', function(error) {
+        numResults++;
+        if (inputClosed && numResults == numTasks) {
+          errorStream.end();
+          resultStream.end();
+        }
+        results(error, null);
+      });
+
+      var taskStream = streams(id).Tasks();
+      taskStream.on('end', function() {
+        inputClosed = true;
+        if (inputClosed && numResults == numTasks) {
+          errorStream.end();
+          resultStream.end();
+        }
+      });
+      if (data instanceof Stream) {
+        data.on('data', function(d) {
+          taskStream.write(d);
+          numTasks++;
+        });
+
+        data.on('end', function() {
+          taskStream.end();
+        });
+      } else {
+        for (var i=0; i < data.length; i++) {
+          taskStream.write(data[i]);
+          numTasks++;
+        }
+        taskStream.end();
+      }
+    });
   }
+
+  this.group = undefined;
+  this.bid = 1;
+  this.map = map;
 }

@@ -1,6 +1,6 @@
-  {
+{
   "name": "crowdprocess",
-  "version": "0.3.9",
+  "version": "0.4.0",
   "description": "Write programs programmatically for crowdprocess in an easy way",
   "main": "index.js",
   "directories": {
@@ -11,24 +11,10 @@
     "browser",
     "client"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/CrowdProcess/crpEasyAsPie"
-  },
-  "scripts": {
-    "test": "tap tests/*.js"
-  },
-  "author": "Flávio Sousa, Igor Soarez, Pedro Afonso",
+  "author": "CrowdProcess",
   "license": "MIT",
   "dependencies": {
-    "crp-account-client": "*",
     "crp-job-client": "*",
-    "crp-stream-client": "git://github.com/CrowdProcess/crp-stream-client",
-    "osenv": "0.0.3",
-    "read": "~1.0.5",
-    "path": "~0.4.9"
-  },
-  "devDependencies": {
-    "tap": "~0.4.4"
+    "crp-stream-client": "*"
   }
 }
