@@ -1,7 +1,7 @@
 {
   "name": "crowdprocess",
   "version": "0.4.0",
-  "description": "Write programs programmatically for crowdprocess in an easy way",
+  "description": "Distributed map in CrowdProcess",
   "main": "index.js",
   "directories": {
     "example": "example"
@@ -11,7 +11,12 @@
     "browser",
     "client"
   ],
-  "author": "CrowdProcess",
+  "contributors": [
+    "Miguel Serrano <miguel@crowdprocess.com> (https://github.com/miguelvps)",
+    "Flávio Sousa <flavio.jsousa@gmail.com> (https://twitter.com/fjmarujo)",
+    "Pedro Afonso <mail@pedroafonso.pt> (https://twitter.com/pedrombafonso)",
+    "João Jerónimo <j@crowdprocess.com> (https://twitter.com/joaojeronimo)"
+    ],
   "license": "MIT",
   "dependencies": {
     "crp-job-client": "*",
