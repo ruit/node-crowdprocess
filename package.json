@@ -1,6 +1,6 @@
 {
   "name": "crowdprocess",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Distributed map in CrowdProcess",
   "main": "index.js",
   "directories": {
@@ -21,5 +21,6 @@
   "dependencies": {
     "crp-job-client": "*",
     "crp-stream-client": "*"
-  }
+  },
+  "repository": "https://github.com/CrowdProcess/node-crowdprocess"
 }
