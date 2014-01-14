@@ -1,7 +1,7 @@
   {
   "name": "crowdprocess",
-  "version": "0.3.9",
-  "description": "Write programs programmatically for crowdprocess in an easy way",
+  "version": "0.3.11",
+  "description": "Write programs programmatically for crowdprocess",
   "main": "index.js",
   "directories": {
     "example": "example"
@@ -23,7 +23,7 @@
   "dependencies": {
     "crp-account-client": "*",
     "crp-job-client": "*",
-    "crp-stream-client": "git://github.com/CrowdProcess/crp-stream-client",
+    "crp-stream-client": "*",
     "osenv": "0.0.3",
     "read": "~1.0.5",
     "path": "~0.4.9"
