@@ -60,12 +60,13 @@ You only have to instanciate CrowdProcess with your email and password and execu
 
 ```javascript
 var CrowdProcess = require('crowdprocess');
-
 var crp = new CrowdProcess('email@example.com', 'password');
 
-crp.map(Run, data, function(err, result) {
+crp.map(Run, data, onResult);
+
+function onResult (err, result) {
   console.log(result);
-});
+}
 ```
 
 This pretty much covers it. See the working [example](https://github.com/CrowdProcess/node-crowdprocess/blob/master/example/example.js) to get started right away.
