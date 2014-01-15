@@ -56,11 +56,17 @@ function Run(data){
 ```
 
 We require the module and call the crowdprocess map function in a node script. Using the crowdprocess module is very simple.
-You only have to instanciate CrowdProcess with your email and password and execute the map function with a callback that will be called once per each computed result.
+You only have to instanciate CrowdProcess with your credentials (email and password or auth token) and execute the map function with a callback that will be called once per each computed result.
 
 ```javascript
 var CrowdProcess = require('crowdprocess');
-var crp = new CrowdProcess('email@example.com', 'password');
+var crp = new CrowdProcess({
+  email: 'email@example.com',
+  password: 'password'
+});
+
+// or
+// var crp = new CrowdProcess({ token: 'bb74a721-1728-45fe-8394-2d3ef4e0ac82' });
 
 crp.map(Run, data, onResult);
 
