@@ -6,7 +6,13 @@ function Run(d) {
 
 var data = [1, 2, 3];
 
-var credentials = require('../credentials');
+//Write your mail and password in credentials.json
+// {
+//   "email": "your@mail.com",
+//   "password": "yourpassword"
+// }
+
+var credentials = require('./credentials');
 var crp = new CrowdProcess(credentials.email, credentials.password);
 
 crp.map(Run, data, function(err, result) {
