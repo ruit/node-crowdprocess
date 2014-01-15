@@ -1,8 +1,8 @@
 #CrowdProcess
 
-[![CrowdProcess](http://crowdprocess.com/img/crowdprocess-logo-symbol.svg)](http://crowdprocess.com/)
+[![CrowdProcess](https://crowdprocess.com/img/crowdprocess-logo-symbol.svg)](https://crowdprocess.com/)
 
-[CrowdProcess](http://crowdprocess.com/) is a browser-powered distributed computing platform.
+[CrowdProcess](https://crowdprocess.com/) is a browser-powered distributed computing platform.
 The platform connects with our partner websites and they supply it with their viewers' browsers' processing power using an [HTML5 Web Worker](https://developer.mozilla.org/en-US/docs/Web/Guide/Performance/Using_web_workers).
 
 CrowdProcess then makes that processing power available to it's users.
@@ -56,16 +56,23 @@ function Run(data){
 ```
 
 We require the module and call the crowdprocess map function in a node script. Using the crowdprocess module is very simple.
-You only have to instanciate CrowdProcess with your email and password and execute the map function with a callback that will be called once per each computed result.
+You only have to instanciate CrowdProcess with your credentials (email and password or auth token) and execute the map function with a callback that will be called once per each computed result.
 
 ```javascript
 var CrowdProcess = require('crowdprocess');
-
-var crp = new CrowdProcess('email@example.com', 'password');
-
-crp.map(Run, data, function(err, result) {
-  console.log(result);
+var crp = new CrowdProcess({
+  email: 'email@example.com',
+  password: 'password'
 });
+
+// or
+// var crp = new CrowdProcess({ token: 'bb74a721-1728-45fe-8394-2d3ef4e0ac82' });
+
+crp.map(Run, data, onResult);
+
+function onResult (err, result) {
+  console.log(result);
+}
 ```
 
 This pretty much covers it. See the working [example](https://github.com/CrowdProcess/node-crowdprocess/blob/master/example/example.js) to get started right away.

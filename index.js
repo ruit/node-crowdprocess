@@ -4,15 +4,27 @@ var StreamClient = require('crp-stream-client');
 
 module.exports = CrowdProcess;
 
-function CrowdProcess(email, password) {
-  var jobs = JobClient({
-    email: email,
-    password: password
-  });
-  var streams = StreamClient({
-    email: email,
-    password: password
-  });
+function CrowdProcess(username, password) {
+  var opts = {};
+  if (arguments.length === 1 &&
+      typeof arguments[0] === 'string') {
+    opts.token = arguments[0];
+  }
+
+  if (arguments.length === 1 &&
+      typeof arguments[0] === 'object') {
+    opts = arguments[0];
+  }
+
+  if (arguments.length === 2 &&
+      typeof arguments[0] === 'string' &&
+      typeof arguments[1] === 'string') {
+    opts.email = arguments[0];
+    opts.password = arguments[1];
+  }
+
+  var jobs = JobClient(opts);
+  var streams = StreamClient(opts);
 
   function map(program, data, results) {
     if (typeof program !== 'string' && typeof program.toString === 'function')
