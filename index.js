@@ -1,6 +1,13 @@
 var Stream = require('stream');
 var JobClient = require('crp-job-client');
 var StreamClient = require('crp-stream-client');
+var inherits = require('util').inherits;
+
+var Duplex = Stream.Duplex ||
+  require('readable-stream').Duplex;
+
+var PassThrough = Stream.PassThrough ||
+  require('readable-stream').PassThrough;
 
 module.exports = CrowdProcess;
 
@@ -26,14 +33,136 @@ function CrowdProcess(username, password) {
   var jobs = JobClient(opts);
   var streams = StreamClient(opts);
 
-  function map(program, data, results) {
-    if (typeof program !== 'string' && typeof program.toString === 'function')
-      program = program.toString();
+  function DuplexThrough(options) {
+    var self = this;
+
+    options.objectMode = true; // force
+
+    if (!(this instanceof DuplexThrough)) {
+      return new DuplexThrough(options);
+    }
+    Duplex.call(this, options);
+    this.inRStream = new PassThrough(options);
+    this.outWStream = new PassThrough(options);
+
+
+    if (options instanceof Function) {
+      options = {
+        program: options
+      };
+    }
+
+    if (options.program instanceof Function) {
+      options.program = options.program.toString();
+    }
+
 
     jobs.create({
-      program: program,
-      group: this.group,
-      bid: this.bid
+      program: options.program,
+      group: options.group,
+      bid: options.bid
+    }, function (err, res) {
+      if (err) throw err;
+
+      var id = res.id;
+      var resultStream = streams(id).Results({ stream: true });
+      var errorStream = streams(id).Errors({ stream: true });
+      var taskStream = streams(id).Tasks();
+
+      self.inRStream.pipe(taskStream);
+      resultStream.pipe(self.outWStream);
+
+
+/*
+      errorStream.on('data', function (err) {
+        self.outWStream.emit('error', err);
+      });*/
+    });
+  }
+
+  inherits(DuplexThrough, Duplex);
+
+  DuplexThrough.prototype._write = _write;
+  function _write (chunk, enc, cb) {
+    this.inRStream.write(chunk, enc, cb);
+  }
+
+  DuplexThrough.prototype._read = function (n) {
+    console.log('trying to read ', n);
+    var self = this;
+
+    self.outWStream
+      .on('readable', function () {
+        var chunk;
+        while (null !== (chunk = self.outWStream.read(n))) {
+          // if push returns false, stop writing
+          if (!self.push(chunk)) {
+            break;
+          }
+        }
+      })
+      .on('end', function () {
+        self.push(null); // EOF
+      });
+
+
+/*
+    self.outWStream.on('data', function (data) {
+      console.log('GOT DATA', data)
+      self.push(data);
+    });
+
+    self.on('end', function () {
+      self.push(null); // EOF
+    });*/
+  };
+
+  return DuplexThrough;
+/*
+  function Map(program, data, onResults) {
+    var s = new Stream();
+    s.writable = true;
+    s.readable = true;
+
+    s.write = write;
+    s.end = end;
+    s.destroy = destroy;
+
+
+    function write (d) {
+      if (taskStream && taskStream.writable)
+        return taskStream.write(d);
+      return false;
+    }
+
+    function end () {
+      console.log('END');
+    }
+
+    function destroy () {
+      console.log('DESTROY');
+    }
+
+    var taskStream;
+    var resultsBuffer = [];
+
+    var opts;
+    if (typeof program === 'object') {
+      opts = program;
+    } else {
+      opts = {
+        program: program
+      };
+    }
+
+    if (opts.program instanceof Function)
+      opts.program = opts.program.toString();
+
+
+    jobs.create({
+      program: opts.program,
+      group: opts.group,
+      bid: opts.bid
     }, function (err, res) {
       if (err) throw err;
 
@@ -45,24 +174,38 @@ function CrowdProcess(username, password) {
       var resultStream = streams(id).Results({ stream: true });
       resultStream.on('data', function(result) {
         numResults++;
+
+        if (onResults instanceof Function) {
+          resultsBuffer.push(result);
+        }
+
         if (inputClosed && numResults == numTasks) {
           resultStream.end();
           errorStream.end();
+          onResults(resultsBuffer);
+          s.emit('end');
         }
-        results(null, result);
       });
 
       var errorStream = streams(id).Errors({ stream: true });
       errorStream.on('data', function(error) {
         numResults++;
+
+        s.emit('error', error);
+
         if (inputClosed && numResults == numTasks) {
           errorStream.end();
           resultStream.end();
+          onResults(resultsBuffer);
+          s.emit('end');
         }
-        results(error, null);
       });
 
-      var taskStream = streams(id).Tasks();
+      taskStream = streams(id).Tasks();
+      taskStream.on('data', function (d) {
+        console.log('got data!', d);
+      });
+
       taskStream.on('end', function() {
         inputClosed = true;
         if (inputClosed && numResults == numTasks) {
@@ -70,6 +213,7 @@ function CrowdProcess(username, password) {
           resultStream.end();
         }
       });
+
       if (data instanceof Stream) {
         data.on('data', function(d) {
           taskStream.write(d);
@@ -87,9 +231,7 @@ function CrowdProcess(username, password) {
         taskStream.end();
       }
     });
-  }
 
-  this.group = undefined;
-  this.bid = 1;
-  this.map = map;
+    return s;
+  }*/
 }

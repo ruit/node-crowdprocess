@@ -1,20 +1,40 @@
 var CrowdProcess = require('..');
+var Readable = require('stream').Readable;
 
 function Run(d) {
-  return d*2;
+  return d;
 }
 
-var data = [1, 2, 3];
-
+var rs = new Readable({objectMode: true});
+var n = 100;
+rs._read = function _read () {
+  if (--n) {
+    rs.push({ d : Date.now() });
+  } else {
+    rs.push(null);
+  }
+};
 //Write your mail and password in credentials.json
 // {
 //   "email": "your@mail.com",
 //   "password": "yourpassword"
 // }
 
-var credentials = require('./credentials');
-var crp = new CrowdProcess(credentials.email, credentials.password);
+var credentials = {
+ email: 'jj@crowdprocess.com',
+ password: 'blablabla1'
+};
 
-crp.map(Run, data, function(err, result) {
-  console.log(result);
-});
+var crp = CrowdProcess(credentials.email, credentials.password);
+
+rs.pipe(crp(Run)).pipe(process.stdout);
+/*
+
+var rw = crp(Run);
+setInterval(function () {
+  var d = Date.now();
+  rw.write(d);
+  console.log(d);
+}, 1000);
+
+*/
