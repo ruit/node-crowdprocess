@@ -10,12 +10,14 @@ function Run(d) {
 }
 
 var data = new Readable({objectMode: true});
-var n = 100;
+var n = 110;
 data._read = function _read () {
   if (--n) {
     data.push({ n: n, d : Date.now() });
   } else {
+    console.log('CLOSING INPUT');
     data.push(null);
+    //data.emit('end');
   }
 };
 

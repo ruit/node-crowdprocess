@@ -42,8 +42,12 @@ function CrowdProcess(username, password) {
       return new DuplexThrough(options);
     }
     Duplex.call(this, options);
-    this.inRStream = new PassThrough(options);
-    this.outWStream = new PassThrough(options);
+    this.inRStream = new PassThrough(options); // tasks
+    this.outWStream = new PassThrough(options); // results
+
+    this.numTasks = 0;
+    this.numResults = 0;
+    this.inputClosed = false;
 
 
     if (options instanceof Function) {
@@ -72,20 +76,29 @@ function CrowdProcess(username, password) {
       self.inRStream.pipe(taskStream);
       resultStream.pipe(self.outWStream);
 
-      self.outWStream.on('readable', pump);
+      self.inRStream.on('end', function () {
+        console.log('INPUT CLOSED!');
+        self.inputClosed = true;
+        if (self.numResults == self.numTasks) {
+          self.inRStream.end();
+          self.outWStream.end();
+          self.push(null);
+        }
+      });
 
       self.outWStream.on('end', function () {
         self.push(null);
       });
 
       errorStream.on('data', function (err) {
-        numResults++;
+        self.numResults++;
         self.emit('error', err);
+        if (self.inputClosed && self.numResults == self.numTasks) {
+          self.inRStream.end();
+          self.outWStream.end();
+          self.push(null);
+        }
       });
-
-      var numTasks = 0;
-      var numResults = 0;
-      var inputClosed = false;
     });
   }
 
@@ -93,23 +106,29 @@ function CrowdProcess(username, password) {
 
   DuplexThrough.prototype._write = _write;
   function _write (chunk, enc, cb) {
+    this.numTasks++;
     this.inRStream.write(chunk, enc, cb);
   }
 
-  DuplexThrough.prototype.pump = function pump () {
-    var chunk;
-    while (null !== (chunk = self.outWStream.read(n))) {
-      if (!self.push(chunk)) {
-        break;
-      }
-    }
-  };
 
   DuplexThrough.prototype._read = function (n) {
     var self = this;
+    self.outWStream.once('readable', function () {
+      var chunk;
+      while (null !== (chunk = self.outWStream.read(n))) {
+        self.numResults++;
+        if (!self.push(chunk)) {
+          break;
+        }
+      }
+    });
 
-    if (self.outWStream._readableState)
-      self.pump();
+    console.log(self.inputClosed, self.numResults, self.numTasks);
+    if (self.inputClosed && self.numResults == self.numTasks) {
+      self.inRStream.end();
+      self.outWStream.end();
+      self.push(null);
+    }
   };
 
   return DuplexThrough;
