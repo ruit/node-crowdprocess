@@ -119,6 +119,10 @@ function CrowdProcess(username, password) {
       self.inRStream.pipe(self.taskStream);
       self.resultStream.pipe(self.outWStream);
 
+      self.resultStream.on('data', function () {
+        console.log('got a result !');
+      });
+
       self.inRStream.on('end', function () {
         if (self.numResults == self.numTasks) {
           self.inRStream.end();
