@@ -117,8 +117,7 @@ function CrowdProcess(username, password) {
       }
 
       if (self.opts.onResults) {
-        self.outWStream.on('data', function (chunk) {
-          console.log('buffering', chunk);
+        self.on('data', function (chunk) {
           self.bufferedResults.push(chunk);
         });
       }
@@ -173,7 +172,6 @@ function CrowdProcess(username, password) {
           break;
         }
 
-        console.log('---', self._writableState.ended, self.numResults, self.numTasks)
         if (self._writableState.ended && self.numResults == self.numTasks) {
           self.resultStream.end();
           self.errorStream.end();
