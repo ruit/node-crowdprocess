@@ -29,9 +29,16 @@ var credentials = {
  password: 'password'
 };
 
+credentials.email = 'jj@crowdprocess.com';
+credentials.password = 'blablabla1';
+
 var crp = CrowdProcess(credentials.email, credentials.password);
 var job = crp(Run);
-data.pipe(job).pipe(results);
+data.pipe(job);
+
+job.on('data', function (d) {
+  console.log('got data', d);
+});
 
 job.on('error', function (err) {
   console.error('got error: ', err);

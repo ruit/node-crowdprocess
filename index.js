@@ -34,35 +34,65 @@ function CrowdProcess(username, password) {
   var jobs = JobClient(opts);
   var streams = StreamClient(opts);
 
-  function DuplexThrough(options) {
+  function DuplexThrough(data, program, onResults) {
     var self = this;
 
-    options.objectMode = true; // force
+    var opts = {};
+
+    if (typeof data === 'object')
+      opts = data;
+
+    if (data instanceof Stream || data instanceof Array) {
+      opts.data = data;
+    }
+
+    if (data instanceof Function) {
+      opts.program = data.toString();
+    }
+
+    if (typeof data === 'string') {
+      opts.program = data;
+    }
+
+    if (!opts.program && program instanceof Function) {
+      opts.program = program.toString();
+    }
+
+    if (!opts.program && typeof program === 'string') {
+      opts.program = program;
+    }
+
+    if (arguments.length === 2 &&
+        opts.program &&
+        !opts.data &&
+        program instanceof Function) {
+      opts.onResults = program;
+    }
+
+    if (onResults instanceof Function) {
+      opts.onResults = onResults;
+    }
+
+    opts.objectMode = true; // force objectMode
+
+    this.opts = opts;
 
     if (!(this instanceof DuplexThrough)) {
-      return new DuplexThrough(options);
+      return new DuplexThrough(opts);
     }
-    Duplex.call(this, options);
-    this.inRStream = new PassThrough(options); // tasks
-    this.outWStream = new PassThrough(options); // results
+    Duplex.call(this, opts);
+
+    this.inRStream = new PassThrough(opts); // tasks
+    this.outWStream = new PassThrough(opts); // results
 
     this.numTasks = 0;
     this.numResults = 0;
-
-    if (options instanceof Function) {
-      options = {
-        program: options
-      };
-    }
-
-    if (options.program instanceof Function) {
-      options.program = options.program.toString();
-    }
+    this.bufferedResults = [];
 
     jobs.create({
-      program: options.program,
-      group: options.group,
-      bid: options.bid
+      program: opts.program,
+      group: opts.group,
+      bid: opts.bid
     }, function (err, res) {
       if (err) throw new Error(err);
 
@@ -70,6 +100,19 @@ function CrowdProcess(username, password) {
       self.resultStream = streams(id).Results({ stream: true });
       self.errorStream = streams(id).Errors({ stream: true });
       self.taskStream = streams(id).Tasks();
+
+      if (self.opts.data instanceof Stream) {
+        self.opts.data.pipe(self.inRStream);
+      }
+
+      if (self.opts.data instanceof Array) {
+        var data = self.opts.data;
+        var n = data.length;
+        for (var i = 0; i < n; i++) {
+          self.inRStream.write(data[i]);
+        }
+        self.inRStream.write(null);
+      }
 
       self.inRStream.pipe(self.taskStream);
       self.resultStream.pipe(self.outWStream);
@@ -96,6 +139,9 @@ function CrowdProcess(username, password) {
           self.inRStream.end();
           self.outWStream.end();
           self.push(null);
+          if (self.opts.onResults) {
+            self.opts.onResults(self.bufferedResults);
+          }
         }
       });
     });
@@ -117,6 +163,10 @@ function CrowdProcess(username, password) {
         self.numResults++;
         if (!self.push(chunk)) {
           break;
+        } else {
+          if (self.opts.onResults) {
+            self.bufferedResults.push(chunk);
+          }
         }
       }
     });
@@ -128,6 +178,9 @@ function CrowdProcess(username, password) {
       self.inRStream.end();
       self.outWStream.end();
       self.push(null);
+      if (self.opts.onResults) {
+        self.opts.onResults(self.bufferedResults);
+      }
     }
   };
 
