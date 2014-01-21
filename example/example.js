@@ -42,6 +42,8 @@ while (n--) {
 
 job.end();
 
+
+
 job.on('end', function () {
   console.log('job ended');
 });

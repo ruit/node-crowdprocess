@@ -102,8 +102,11 @@ function CrowdProcess(username, password) {
       self.errorStream = streams(id).Errors({ stream: true });
       self.taskStream = streams(id).Tasks();
 
+      self.inRStream.pipe(self.taskStream);
+      self.resultStream.pipe(self.outWStream);
+
       if (self.opts.data instanceof Stream) {
-        self.opts.data.pipe(self.inRStream);
+        self.opts.data.pipe(self);
       }
 
       if (self.opts.data instanceof Array) {
@@ -113,15 +116,14 @@ function CrowdProcess(username, password) {
           self.numTasks++;
           self.inRStream.write(data[i]);
         }
-        self.inRStream.end();
+        self.end();
       }
 
-      self.inRStream.pipe(self.taskStream);
-      self.resultStream.pipe(self.outWStream);
-
-      self.resultStream.on('data', function () {
-        console.log('got a result !');
-      });
+      if (self.opts.onResults) {
+        self.on('data', function (chunk) {
+          self.bufferedResults.push(chunk);
+        });
+      }
 
       self.inRStream.on('end', function () {
         if (self.numResults == self.numTasks) {
@@ -170,7 +172,6 @@ function CrowdProcess(username, password) {
       var chunk;
       while (null !== (chunk = self.outWStream.read(n))) {
         self.numResults++;
-        console.log('have a result: ', chunk)
         if (!self.push(chunk)) {
           break;
         } else {
