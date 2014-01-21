@@ -1,7 +1,6 @@
 var CrowdProcess = require('..');
 
 function Run(d) {
-  e
   return d;
 }
 

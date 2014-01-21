@@ -1,4 +1,6 @@
 var Readable = require('stream').Readable;
+var PassThrough = require('stream').PassThrough ||
+  require('readable-stream').PassThrough;
 
 var rs = new Readable();
 var n = 100;
@@ -14,4 +16,14 @@ rs.on('end', function () {
   console.log('rs ended!');
 });
 
-rs.pipe(process.stdout);
+var pt = new PassThrough();
+
+rs.pipe(pt).pipe(process.stdout);
+
+pt.on('data', function (d) {
+  //console.log('got data in pt', d);
+});
+
+pt.on('end', function () {
+  console.log('pt ended!!!!!!');
+});
