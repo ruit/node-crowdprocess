@@ -116,6 +116,13 @@ function CrowdProcess(username, password) {
         self.end();
       }
 
+      if (self.opts.onResults) {
+        self.outWStream.on('data', function (chunk) {
+          console.log('buffering', chunk);
+          self.bufferedResults.push(chunk);
+        });
+      }
+
       self.inRStream.pipe(self.taskStream);
       self.resultStream.pipe(self.outWStream);
 
@@ -146,13 +153,6 @@ function CrowdProcess(username, password) {
         }
       });
     });
-
-
-
-/*
-    setInterval(function () {
-      console.log(self._writableState.ended, self.numResults, self.numTasks);
-    }, 1500);*/
   }
 
   inherits(DuplexThrough, Duplex);
@@ -171,10 +171,6 @@ function CrowdProcess(username, password) {
         self.numResults++;
         if (!self.push(chunk)) {
           break;
-        } else {
-          if (self.opts.onResults) {
-            self.bufferedResults.push(chunk);
-          }
         }
 
         console.log('---', self._writableState.ended, self.numResults, self.numTasks)

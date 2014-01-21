@@ -1,5 +1,4 @@
 var credentials = require('./credentials');
-var crp = new CrowdProcess(credentials.email, credentials. password);
 var CrowdProcess = require('..')(credentials);
 
 var data = [];
