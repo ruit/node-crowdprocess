@@ -96,6 +96,7 @@ function CrowdProcess(username, password) {
         var chunk;
         while (null !== (chunk = self.outWStream.read(n))) {
           // if push returns false, stop writing
+          console.log('CHEGOUOOUUUOUOU', chunk);
           if (!self.push(chunk)) {
             break;
           }
