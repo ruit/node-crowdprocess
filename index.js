@@ -72,11 +72,20 @@ function CrowdProcess(username, password) {
       self.inRStream.pipe(taskStream);
       resultStream.pipe(self.outWStream);
 
+      self.outWStream.on('readable', pump);
 
-/*
+      self.outWStream.on('end', function () {
+        self.push(null);
+      });
+
       errorStream.on('data', function (err) {
-        self.outWStream.emit('error', err);
-      });*/
+        numResults++;
+        self.emit('error', err);
+      });
+
+      var numTasks = 0;
+      var numResults = 0;
+      var inputClosed = false;
     });
   }
 
@@ -87,35 +96,20 @@ function CrowdProcess(username, password) {
     this.inRStream.write(chunk, enc, cb);
   }
 
+  DuplexThrough.prototype.pump = function pump () {
+    var chunk;
+    while (null !== (chunk = self.outWStream.read(n))) {
+      if (!self.push(chunk)) {
+        break;
+      }
+    }
+  };
+
   DuplexThrough.prototype._read = function (n) {
-    console.log('trying to read ', n);
     var self = this;
 
-    self.outWStream
-      .on('readable', function () {
-        var chunk;
-        while (null !== (chunk = self.outWStream.read(n))) {
-          // if push returns false, stop writing
-          console.log('CHEGOUOOUUUOUOU', chunk);
-          if (!self.push(chunk)) {
-            break;
-          }
-        }
-      })
-      .on('end', function () {
-        self.push(null); // EOF
-      });
-
-
-/*
-    self.outWStream.on('data', function (data) {
-      console.log('GOT DATA', data)
-      self.push(data);
-    });
-
-    self.on('end', function () {
-      self.push(null); // EOF
-    });*/
+    if (self.outWStream._readableState)
+      self.pump();
   };
 
   return DuplexThrough;

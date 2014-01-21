@@ -16,4 +16,7 @@ rs._read = function _read () {
   }
 };
 
-rs.pipe(pt).pipe(process.stdout);
+//rs.pipe(pt).pipe(process.stdout);
+
+pt.pipe(process.stdout);
+pt.write({ d: Date.now()});

@@ -1,18 +1,30 @@
 var CrowdProcess = require('..');
 var Readable = require('stream').Readable;
+var Writable = require('stream').Writable;
 
 function Run(d) {
+  if (d.n === 50)
+
+    throw new Error('OOPS, EXCEPTION AT 50');
   return d;
 }
 
-var rs = new Readable({objectMode: true});
+var data = new Readable({objectMode: true});
 var n = 100;
-rs._read = function _read () {
+data._read = function _read () {
   if (--n) {
-    rs.push({ d : Date.now() });
+    data.push({ n: n, d : Date.now() });
   } else {
-    rs.push(null);
+    data.push(null);
   }
+};
+
+var results = new Writable({objectMode: true});
+results.write = function write (chunk, encoding, cb) {
+  console.log('wrote ', chunk, encoding, typeof chunk);
+  if (cb)
+    cb();
+  return true;
 };
 //Write your mail and password in credentials.json
 // {
@@ -27,7 +39,15 @@ var credentials = {
 
 var crp = CrowdProcess(credentials.email, credentials.password);
 
-rs.pipe(crp(Run)).pipe(process.stdout);
+process.stdout._readableState.objectMode = true;
+
+var job = crp(Run);
+
+data.pipe(job).pipe(results);
+
+job.on('error', function (err) {
+  console.error('got error: ', err);
+});
 /*
 
 var rw = crp(Run);
