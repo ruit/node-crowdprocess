@@ -117,10 +117,16 @@ function CrowdProcess(username, password) {
       }
 
       if (self.opts.onResults) {
+        console.log('here, registering event');
         self.on('data', function (chunk) {
+          console.log('buffering ', chunk);
           self.bufferedResults.push(chunk);
         });
       }
+
+      self.resultStream.on('data', function (d) {
+        console.log('getting data', d);
+      });
 
       self.inRStream.pipe(self.taskStream);
       self.resultStream.pipe(self.outWStream);
@@ -163,14 +169,18 @@ function CrowdProcess(username, password) {
   }
 
   DuplexThrough.prototype._read = function (n) {
+    console.log('read called')
     var self = this;
     self.outWStream.once('readable', function () {
+      console.log('was readable')
       var chunk;
       while (null !== (chunk = self.outWStream.read(n))) {
         self.numResults++;
         if (!self.push(chunk)) {
           break;
         }
+
+        console.log('chuuunk:', chunk);
 
         if (self._writableState.ended && self.numResults == self.numTasks) {
           self.resultStream.end();
