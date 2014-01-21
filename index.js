@@ -86,10 +86,6 @@ function CrowdProcess(username, password) {
         self.push(null);
       });
 
-      self.outWStream.on('finished', function () {
-        self.push(null);
-      });
-
       self.errorStream.on('data', function (err) {
         self.numResults++;
         self.emit('error', err);
