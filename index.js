@@ -135,9 +135,7 @@ function CrowdProcess(username, password) {
         if (self._writableState.ended && self.numResults == self.numTasks) {
           self.resultStream.end();
           self.errorStream.end();
-          self.taskStream.end();
           self.inRStream.end();
-          self.outWStream.end();
           self.push(null);
           if (self.opts.onResults) {
             self.opts.onResults(self.bufferedResults);
@@ -174,9 +172,7 @@ function CrowdProcess(username, password) {
     if (self._writableState.ended && self.numResults == self.numTasks) {
       self.resultStream.end();
       self.errorStream.end();
-      self.taskStream.end();
       self.inRStream.end();
-      self.outWStream.end();
       self.push(null);
       if (self.opts.onResults) {
         self.opts.onResults(self.bufferedResults);

@@ -29,8 +29,6 @@ var credentials = {
  password: 'password'
 };
 
-credentials.email = 'jj@crowdprocess.com';
-credentials.password = 'blablabla1';
 
 var crp = CrowdProcess(credentials.email, credentials.password);
 var job = crp(Run);
