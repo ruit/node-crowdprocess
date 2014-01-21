@@ -1,7 +1,7 @@
 var CrowdProcess = require('..')('jj@crowdprocess.com', 'blablabla1');
 
 var data = [];
-var n = 100;
+var n = 10;
 while (n--) {
   data.push(n);
 }

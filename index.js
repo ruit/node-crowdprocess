@@ -35,11 +35,15 @@ function CrowdProcess(username, password) {
   var streams = StreamClient(opts);
 
   function DuplexThrough(data, program, onResults) {
+    if (!(this instanceof DuplexThrough)) {
+      return new DuplexThrough(data, program, onResults);
+    }
+
     var self = this;
 
     var opts = {};
 
-    if (typeof data === 'object')
+    if (Object.getPrototypeOf(data) === Object.prototype)
       opts = data;
 
     if (data instanceof Stream || data instanceof Array) {
@@ -75,12 +79,9 @@ function CrowdProcess(username, password) {
 
     opts.objectMode = true; // force objectMode
 
-    this.opts = opts;
-
-    if (!(this instanceof DuplexThrough)) {
-      return new DuplexThrough(opts);
-    }
     Duplex.call(this, opts);
+
+    this.opts = opts;
 
     this.inRStream = new PassThrough(opts); // tasks
     this.outWStream = new PassThrough(opts); // results
@@ -109,9 +110,10 @@ function CrowdProcess(username, password) {
         var data = self.opts.data;
         var n = data.length;
         for (var i = 0; i < n; i++) {
+          self.numTasks++;
           self.inRStream.write(data[i]);
         }
-        self.inRStream.write(null);
+        self.inRStream.end();
       }
 
       self.inRStream.pipe(self.taskStream);
@@ -143,6 +145,11 @@ function CrowdProcess(username, password) {
         }
       });
     });
+
+/*
+    setInterval(function () {
+      console.log(self._writableState.ended, self.numResults, self.numTasks);
+    }, 500);*/
   }
 
   inherits(DuplexThrough, Duplex);
@@ -159,6 +166,7 @@ function CrowdProcess(username, password) {
       var chunk;
       while (null !== (chunk = self.outWStream.read(n))) {
         self.numResults++;
+        console.log('have a result: ', chunk)
         if (!self.push(chunk)) {
           break;
         } else {
@@ -166,18 +174,18 @@ function CrowdProcess(username, password) {
             self.bufferedResults.push(chunk);
           }
         }
+
+        if (self._writableState.ended && self.numResults == self.numTasks) {
+          self.resultStream.end();
+          self.errorStream.end();
+          self.inRStream.end();
+          self.push(null);
+          if (self.opts.onResults) {
+            self.opts.onResults(self.bufferedResults);
+          }
+        }
       }
     });
-
-    if (self._writableState.ended && self.numResults == self.numTasks) {
-      self.resultStream.end();
-      self.errorStream.end();
-      self.inRStream.end();
-      self.push(null);
-      if (self.opts.onResults) {
-        self.opts.onResults(self.bufferedResults);
-      }
-    }
   };
 
   return DuplexThrough;
