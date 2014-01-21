@@ -16,3 +16,8 @@ function onResults (results) {
 
 var job = CrowdProcess(data, Run, onResults);
 
+job.on('data', function (d) {
+  //console.log('got result: ', d);
+});
+
+//job.end();
