@@ -11,7 +11,7 @@ function Run (d) {
   return d*2;
 }
 
-var job = CrowdProcess(data, Run, onResults);
+CrowdProcess(data, Run, onResults);
 
 function onResults (results) {
   console.log('got all', results.length, 'results');

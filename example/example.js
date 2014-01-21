@@ -33,8 +33,12 @@ var job = crp(data, Run, function (r) { console.log('got all:', r.length); });
 /*
 while (n--) {
   job.write({ n: n, d : Date.now() });
-}*/
-/*
+}
+
+job.end();
+*/
+
+
 job.on('end', function () {
   console.log('job ended');
 });
@@ -46,4 +50,3 @@ job.on('data', function (d) {
 job.on('error', function (err) {
   console.error('got error: ', err);
 });
-*/

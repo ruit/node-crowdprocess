@@ -104,13 +104,8 @@ function CrowdProcess(username, password) {
       self.inRStream.pipe(self.taskStream);
       self.resultStream.pipe(self.outWStream);
 
-      self.taskStream.on('data', function (d) {
-        console.log(d.toString());
-      });
-
       if (self.opts.data instanceof Stream) {
-        console.log('it\'s a stream!');
-        self.opts.data.pipe(self.inRStream);
+        self.opts.data.pipe(self);
       }
 
       if (self.opts.data instanceof Array) {
@@ -124,9 +119,7 @@ function CrowdProcess(username, password) {
       }
 
       if (self.opts.onResults) {
-        console.log('here, registering event');
         self.on('data', function (chunk) {
-          console.log('buffering ', chunk);
           self.bufferedResults.push(chunk);
         });
       }
