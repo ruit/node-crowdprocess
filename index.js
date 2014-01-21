@@ -64,7 +64,7 @@ function CrowdProcess(username, password) {
       group: options.group,
       bid: options.bid
     }, function (err, res) {
-      if (err) throw err;
+      if (err) throw new Error(err);
 
       var id = res.id;
       self.resultStream = streams(id).Results({ stream: true });
