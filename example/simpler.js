@@ -1,4 +1,6 @@
-var CrowdProcess = require('..')('jj@crowdprocess.com', 'blablabla1');
+var credentials = require('./credentials');
+var crp = new CrowdProcess(credentials.email, credentials. password);
+var CrowdProcess = require('..')(credentials);
 
 var data = [];
 var n = 10;
@@ -7,17 +9,11 @@ while (n--) {
 }
 
 function Run (d) {
-  return d;
-}
-
-function onResults (results) {
-  console.log('got all', results.length, 'results');
+  return d*2;
 }
 
 var job = CrowdProcess(data, Run, onResults);
 
-job.on('data', function (d) {
-  //console.log('got result: ', d);
-});
-
-//job.end();
+function onResults (results) {
+  console.log('got all', results.length, 'results');
+}

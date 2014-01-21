@@ -1,3 +1,5 @@
+var CrowdProcess = require('..');
+
 var data = [
   "The power of connected browsers compels you",
   "dude...latency between the browsers! And some optimizations we still need to do lol",
@@ -21,11 +23,9 @@ function Run(data){
   return output;
 }
 
+var credentials = require('./credentials');
+var crp = new CrowdProcess(credentials.email, credentials. password);
 
-var CrowdProcess = require('..');
-
-var crp = new CrowdProcess('email@example.com', 'password');
-
-crp.map(Run, data, function(err, result) {
-  console.log(result);
+var job = crp(data, Run, function(res) {
+  console.log(res);
 });

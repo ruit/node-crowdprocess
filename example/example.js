@@ -3,7 +3,7 @@ var Readable = require('stream').Readable;
 var Writable = require('stream').Writable;
 
 function Run(d) {
-  return d;
+  return d*2;
 }
 
 var data = new Readable({objectMode: true});
@@ -24,17 +24,10 @@ results.write = function write (chunk, encoding, cb) {
 };
 
 
-var credentials = {
- email: 'user@email.com',
- password: 'password'
-};
+var credentials = require('./credentials');
+var crp = new CrowdProcess(credentials);
 
-credentials.email = 'jj@crowdprocess.com';
-credentials.password = 'blablabla1';
-
-var crp = CrowdProcess(credentials.email, credentials.password);
 var job = crp(Run);
-//data.pipe(job);
 
 while (n--) {
   job.write({ n: n, d : Date.now() });
