@@ -34,7 +34,17 @@ credentials.password = 'blablabla1';
 
 var crp = CrowdProcess(credentials.email, credentials.password);
 var job = crp(Run);
-data.pipe(job);
+//data.pipe(job);
+
+while (n--) {
+  job.write({ n: n, d : Date.now() });
+}
+
+job.end();
+
+job.on('end', function () {
+  console.log('job ended');
+});
 
 job.on('data', function (d) {
   console.log('got data', d);
