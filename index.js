@@ -66,8 +66,7 @@ function CrowdProcess(username, password) {
       opts.program = program;
     }
 
-    if (arguments.length === 2 &&
-        opts.program &&
+    if (opts.program &&
         !opts.data &&
         program instanceof Function) {
       opts.onResults = program;
@@ -102,7 +101,15 @@ function CrowdProcess(username, password) {
       self.errorStream = streams(id).Errors({ stream: true });
       self.taskStream = streams(id).Tasks();
 
+      self.inRStream.pipe(self.taskStream);
+      self.resultStream.pipe(self.outWStream);
+
+      self.taskStream.on('data', function (d) {
+        console.log(d.toString());
+      });
+
       if (self.opts.data instanceof Stream) {
+        console.log('it\'s a stream!');
         self.opts.data.pipe(self.inRStream);
       }
 
@@ -123,13 +130,6 @@ function CrowdProcess(username, password) {
           self.bufferedResults.push(chunk);
         });
       }
-
-      self.resultStream.on('data', function (d) {
-        console.log('getting data', d);
-      });
-
-      self.inRStream.pipe(self.taskStream);
-      self.resultStream.pipe(self.outWStream);
 
       self.inRStream.on('end', function () {
         if (self.numResults == self.numTasks) {
@@ -169,10 +169,10 @@ function CrowdProcess(username, password) {
   }
 
   DuplexThrough.prototype._read = function (n) {
-    console.log('read called')
+    console.log('read called');
     var self = this;
     self.outWStream.once('readable', function () {
-      console.log('was readable')
+      console.log('was readable');
       var chunk;
       while (null !== (chunk = self.outWStream.read(n))) {
         self.numResults++;

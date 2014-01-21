@@ -27,12 +27,14 @@ results.write = function write (chunk, encoding, cb) {
 var credentials = require('./credentials');
 var crp = new CrowdProcess(credentials);
 
-var job = crp(Run);
+var job = crp(data, Run, function (r) { console.log('got all:', r.length); });
+//data.pipe(job);
 
+/*
 while (n--) {
   job.write({ n: n, d : Date.now() });
-}
-
+}*/
+/*
 job.on('end', function () {
   console.log('job ended');
 });
@@ -44,5 +46,4 @@ job.on('data', function (d) {
 job.on('error', function (err) {
   console.error('got error: ', err);
 });
-
-job.end();
+*/
