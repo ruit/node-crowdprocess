@@ -1,4 +1,4 @@
-var credentials = require('./credentials');
+var credentials = require('../credentials');
 var CrowdProcess = require('..')(credentials);
 var Readable = require('stream').Readable;
 var Writable = require('stream').Writable;

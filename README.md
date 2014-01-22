@@ -49,7 +49,24 @@ var credentials = require('./credentials');
 var CrowdProcess = require('..')(credentials);
 ```
 
-The `credentials` object should be something like `{ "email": "your@email.com", "password": "secret" }` or `{ "token": "eaa35d67-2aef-4b14-a50e-9d6c13f5012e" }`. If you don't have an account yet, you should [get one](https://crowdprocess.com/register). It takes less than 20 seconds ;)
+The `credentials` object should be something like
+
+```json
+{
+  "email": "your@email.com",
+  "password": "secret"
+}
+```
+
+or
+
+```json
+{
+  "token": "eaa35d67-2aef-4b14-a50e-9d6c13f5012e"
+}
+```
+
+If you don't have CrowdProcess account yet, you should [get one](https://crowdprocess.com/register). It takes less than 20 seconds ;)
 
 ### CrowdProcess([data, ] Run[, cb]) is a [Duplex](http://nodejs.org/api/stream.html#stream_class_stream_duplex_1) stream
 
@@ -138,6 +155,13 @@ If you don't listen for errors and they occur, an uncaught exception will be thr
 ##Caveats
 
 1. The Duplex stream exposed accepts and delivers [`objectMode`](http://nodejs.org/api/stream.html#stream_object_mode) streams, so you can't, for instance, pipe directly it to `process.stdout`. You need to pass them through a stringifier like [JSONStream](https://github.com/dominictarr/JSONStream) or [newline-json](https://github.com/CrowdProcess/newline-json)
+
+##Tests and Examples
+
+If you want to run tests and examples, create a `credentials.json` file in the root of this repository with your security credentials, that may be either `email` and `password` or `token`. They're the same object described [above](#require-and-authenticate).
+
+Don't worry, they will be [`.gitignore`d](https://github.com/CrowdProcess/node-crowdprocess/blob/master/.gitignore#L1).
+
 
 ##Under the hood
 
