@@ -160,7 +160,7 @@ If you don't listen for errors and they occur, an uncaught exception will be thr
 
 If you want to run tests and examples, create a `credentials.json` file in the root of this repository with your security credentials, that may be either `email` and `password` or `token`. They're the same object described [above](#require-and-authenticate).
 
-Don't worry, they will be [`.gitignore`d](https://github.com/CrowdProcess/node-crowdprocess/blob/master/.gitignore#L1).
+Don't worry, they will be [`.gitignore`d](https://github.com/CrowdProcess/node-crowdprocess/blob/master/.gitignore#L2).
 
 
 ##Under the hood
