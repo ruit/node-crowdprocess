@@ -1,5 +1,6 @@
 var test = require('tap').test;
-var CrowdProcess = require('..')('jj@crowdprocess.com', 'blablabla1');
+var credentials = require('./credentials.json');
+var CrowdProcess = require('..')(credentials);
 var data = require('./fixtures/data');
 var program = require('./fixtures/program');
 var Writable = require('stream').Writable;
