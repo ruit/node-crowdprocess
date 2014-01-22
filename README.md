@@ -3,11 +3,10 @@
 [![CrowdProcess](https://crowdprocess.com/img/crowdprocess-logo-symbol.svg)](https://crowdprocess.com/)
 
 [CrowdProcess](https://crowdprocess.com/) is a browser-powered distributed computing platform.
-The platform connects with our partner websites and they supply it with their viewers' browsers' processing power using an [HTML5 Web Worker](https://developer.mozilla.org/en-US/docs/Web/Guide/Performance/Using_web_workers).
 
-CrowdProcess then makes that processing power available to it's users.
+This is the easiest entry-level module to use CrowdProcess in node.js (and the [browser](https://github.com/substack/node-browserify)).
 
-With this module you can write node programs programatically for CrowdProcess.
+If you're not sure about how CrowdProcess works, you should go through [the guide](https://crowdprocess.com/guide), it should take you less than 5 minutes.
 
 ##Install
 
@@ -15,57 +14,126 @@ With this module you can write node programs programatically for CrowdProcess.
 npm install crowdprocess
 ```
 
-##Getting started
-
-The best way to explain 'how to CrowdProcess' is to get started with an example.
-
-Let's begin with a very simple application. We have a group of strings (tweets in this case) and we want to
-know how many occurrences of the word 'browsers' we have in each. Also, we have a lot of tweets so we'll be using
-CrowdProcess to speed up the count.
-
-We begin with a Readable stream:
+##Examples speek louder than words
 
 ```javascript
+var credentials = require('./credentials');
+var CrowdProcess = require('..')(credentials);
 
-var Readable = require('stream').Readable;
-var rs = Readable();
-
-var n = 100;
-
-rs._read = function () {
-  if (--n)
-    rs.push(n);
-  else
-    rs.push(null);
-};
-```
-
-we define our function that will run in the browser:
-
-```javascript
-function Run(n){
-  return n*2;
+function Run (d) {
+  return d*2;
 }
 
-```
+var data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-We require the module and call the crowdprocess map function in a node script. Using the crowdprocess module is very simple.
-You only have to instanciate CrowdProcess with your credentials (email and password or auth token).
-
-```javascript
-var CrowdProcess = require('crowdprocess');
-var crp = new CrowdProcess({
-  email: 'email@example.com',
-  password: 'password'
+CrowdProcess(data, Run, function (results) {
+  console.log('results:', results);
 });
 
-// or
-// var crp = new CrowdProcess({ token: 'bb74a721-1728-45fe-8394-2d3ef4e0ac82' });
-
-rs.pipe(crp(Run)).pipe(process.stdout);
 ```
 
-This pretty much covers it. See the working [example](https://github.com/CrowdProcess/node-crowdprocess/blob/master/example/example.js) to get started right away.
+Notice any [resemblance](https://github.com/caolan/async#map);
+
+This pretty much covers it. There are more [examples](https://github.com/CrowdProcess/node-crowdprocess/tree/master/examples) using streams.
+
+##More detailed use
+
+### Require and Authenticate
+
+```
+var credentials = require('./credentials');
+var CrowdProcess = require('..')(credentials);
+```
+
+The `credentials` object should be something like `{ "email": "your@email.com", "password": "secret" }` or `{ "token": "eaa35d67-2aef-4b14-a50e-9d6c13f5012e" }`. If you don't have an account yet, you should [get one](https://crowdprocess.com/register). It takes less than 20 seconds ;)
+
+### CrowdProcess([data, ] Run[, cb]) is a [Duplex](http://nodejs.org/api/stream.html#stream_class_stream_duplex_1) stream
+
+The `CrowdProcess` object you get after requiring and authenticating is a "job builder", meaning you can use it to create CrowdProcess Jobs. Just pass it [at least] a `Run` function and you'll get a Duplex stream:
+
+```javascript
+var job = CrowdProcess(Run);
+console.log(job instanceof Duplex) // true
+```
+
+This means you can pipe data do it, and results from it!
+
+**`Run`** is the only mandatory parameter.
+
+### The input data
+
+Input data must be either an Array of objects or a [Readable](http://nodejs.org/api/stream.html#stream_class_stream_readable_1) [objectMode](http://nodejs.org/api/stream.html#stream_object_mode) stream.
+
+If you choose to use an Array, you must pass it as the first parameter:
+
+```javascript
+var dataArray = [1, 2, 3];
+CrowdProcess(dataArray, Run, onResults);
+```
+
+If you choose to use a Readable stream, then you can either pass it as the first parameter:
+
+```
+var dataStream = new Readable();
+CrowdProcess(dataStream, Run, onResults);
+```
+
+Or pipe it:
+
+```
+var dataStream = new Readable();
+dataStream.pipe(CrowdProcess(Run, onResults));
+```
+
+### Getting the results
+
+If you want the results to be buffered, just pass a callback:
+
+```javascript
+var dataArray = [1, 2, 3];
+CrowdProcess(dataArray, Run, function (results) {
+  console.log('results: ', results);
+});
+
+```
+
+If you don't want them buffered, don't pass the callback:
+
+```javascript
+var dataArray = [1, 2, 3];
+
+var job = CrowdProcess(dataArray, Run);
+
+job.on('data', function (result) {
+  console.log('got a result: ', result);
+});
+
+job.on('end', function () {
+  console.log('got all results!');
+});
+
+```
+
+### Listening for errors
+
+If your job yields errors, you should catch them so you can make it better next time:
+
+```javascript
+var dataArray = [1, 2, 3];
+
+var job = CrowdProcess(dataArray, Run);
+
+job.on('error', function (err) {
+  console.error('oh no:', err);
+});
+
+```
+
+If you don't listen for errors and they occur, an uncaught exception will be thrown.
+
+##Caveats
+
+1. The Duplex stream exposed accepts and delivers [`objectMode`](http://nodejs.org/api/stream.html#stream_object_mode) streams, so you can't, for instance, pipe directly it to `process.stdout`. You need to pass them through a stringifier like [JSONStream](https://github.com/dominictarr/JSONStream) or [newline-json](https://github.com/CrowdProcess/newline-json)
 
 ##Under the hood
 
