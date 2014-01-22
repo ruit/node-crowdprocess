@@ -43,8 +43,10 @@ function CrowdProcess(username, password) {
 
     var opts = {};
 
-    if (Object.getPrototypeOf(data) === Object.prototype)
+    if (data instanceof Object &&
+        Object.getPrototypeOf(data) === Object.prototype) {
       opts = data;
+    }
 
     if (data instanceof Stream || data instanceof Array) {
       opts.data = data;

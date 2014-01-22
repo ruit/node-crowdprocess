@@ -100,3 +100,29 @@ test('no buffers at all', function (t) {
     t.end();
   });
 });
+
+
+test('program is a string', function (t) {
+  var dataStream = data.generateStream(N);
+  var dataSent = data.generateArray(N);
+  var results = [];
+
+  var resultStream = new Writable({ objectMode: true });
+  resultStream._write = _write;
+  function _write (chunk, enc, cb) {
+    results.push(chunk);
+    if (cb) cb();
+    return true;
+  }
+
+  var program = 'function Run (d) { return d; }';
+
+  // awesome oneliner!
+  dataStream.pipe(CrowdProcess(program)).pipe(resultStream);
+
+  resultStream.on('finish', function () {
+    t.equal(results.length, N);
+    t.deepEqual(results.sort(), dataSent.sort());
+    t.end();
+  });
+});
