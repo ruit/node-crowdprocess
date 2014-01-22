@@ -157,8 +157,17 @@ function CrowdProcess(username, password) {
 
   DuplexThrough.prototype._write = _write;
   function _write (chunk, enc, cb) {
-    this.numTasks++;
-    this.inRStream.write(chunk, enc, cb);
+    var self = this;
+    write();
+    function write () {
+      wrote = self.inRStream.write(chunk);
+      if (wrote) {
+        self.numTasks++;
+        cb();
+      } else {
+        self.inRStream.once('drain', write);
+      }
+    }
   }
 
   DuplexThrough.prototype._read = function (n) {
