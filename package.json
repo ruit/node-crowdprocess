@@ -6,6 +6,9 @@
   "directories": {
     "example": "example"
   },
+  "scripts" : {
+    "test" : "tap test/*.js"
+  },
   "keywords": [
     "crowdprocess",
     "browser",
