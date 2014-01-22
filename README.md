@@ -1,7 +1,9 @@
 #CrowdProcess
 
 <p align="center">
-[![CrowdProcess](https://crowdprocess.com/img/overview.png)](https://crowdprocess.com/)
+  <a href="http://crowdprocess.com" target="new">
+    <img src="https://crowdprocess.com/img/overview.png" alt="CrowdProcess"/>
+  </a>
 </p>
 
 [CrowdProcess](https://crowdprocess.com/) is a browser-powered distributed computing platform.
