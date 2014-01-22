@@ -1,6 +1,6 @@
 {
   "name": "crowdprocess",
-  "version": "0.3.10",
+  "version": "0.4.0",
   "description": "Distributed map in CrowdProcess",
   "main": "index.js",
   "directories": {
@@ -16,11 +16,14 @@
     "Flávio Sousa <flavio.jsousa@gmail.com> (https://twitter.com/fjmarujo)",
     "Pedro Afonso <mail@pedroafonso.pt> (https://twitter.com/pedrombafonso)",
     "João Jerónimo <j@crowdprocess.com> (https://twitter.com/joaojeronimo)"
-    ],
+  ],
   "license": "MIT",
   "dependencies": {
     "crp-job-client": "*",
     "crp-stream-client": "*"
   },
-  "repository": "https://github.com/CrowdProcess/node-crowdprocess"
+  "repository": "https://github.com/CrowdProcess/node-crowdprocess",
+  "devDependencies": {
+    "tap": "~0.4.8"
+  }
 }

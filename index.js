@@ -162,18 +162,14 @@ function CrowdProcess(username, password) {
   }
 
   DuplexThrough.prototype._read = function (n) {
-    console.log('read called');
     var self = this;
     self.outWStream.once('readable', function () {
-      console.log('was readable');
       var chunk;
       while (null !== (chunk = self.outWStream.read(n))) {
         self.numResults++;
         if (!self.push(chunk)) {
           break;
         }
-
-        console.log('chuuunk:', chunk);
 
         if (self._writableState.ended && self.numResults == self.numTasks) {
           self.resultStream.end();
@@ -187,6 +183,9 @@ function CrowdProcess(username, password) {
       }
     });
   };
+
+  // legacy
+  DuplexThrough.map = DuplexThrough;
 
   return DuplexThrough;
 }
