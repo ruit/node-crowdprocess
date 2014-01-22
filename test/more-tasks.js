@@ -5,8 +5,10 @@ var data = require('./fixtures/data');
 var program = require('./fixtures/program');
 var Writable = require('stream').Writable;
 
+// this will take some time, so you should run it with
+// tap --timeout 600
 
-var N = 500;
+var N = 50000;
 
 test('lower level write and end', function (t) {
   var dataArray = data.generateArray(N);
