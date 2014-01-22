@@ -1,6 +1,8 @@
 #CrowdProcess
 
-[![CrowdProcess](https://crowdprocess.com/img/crowdprocess-logo-symbol.svg)](https://crowdprocess.com/)
+<p align="center">
+[![CrowdProcess](https://crowdprocess.com/img/overview.png)](https://crowdprocess.com/)
+</p>
 
 [CrowdProcess](https://crowdprocess.com/) is a browser-powered distributed computing platform.
 
