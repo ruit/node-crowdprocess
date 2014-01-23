@@ -97,6 +97,10 @@ function CrowdProcess(username, password) {
       });
     });
 
+    this.on('end', function () {
+      self.inRStream.end();
+    });
+
     jobs.create({
       program: opts.program,
       group: opts.group,
@@ -114,6 +118,9 @@ function CrowdProcess(username, password) {
 
       if (self.opts.data instanceof Stream) {
         self.opts.data.pipe(self);
+        self.opts.data.on('end', function () {
+          self.inRStream.end();
+        });
       }
 
       if (self.opts.data instanceof Array) {
@@ -123,6 +130,7 @@ function CrowdProcess(username, password) {
           self.numTasks++;
           self.inRStream.write(data[i]);
         }
+        self.inRStream.end();
         self.end();
       }
 
