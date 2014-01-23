@@ -91,6 +91,12 @@ function CrowdProcess(username, password) {
     this.numResults = 0;
     this.bufferedResults = [];
 
+    this.on('pipe', function (src) {
+      src.on('end', function () {
+        self.inRStream.end();
+      });
+    });
+
     jobs.create({
       program: opts.program,
       group: opts.group,

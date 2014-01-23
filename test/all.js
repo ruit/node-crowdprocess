@@ -7,6 +7,8 @@ var Writable = require('stream').Writable;
 
 var N = 100;
 
+function xtest() {}
+
 test('all arguments, with buffering', function (t) {
   var dataArray = data.generateArray(N);
   var job = CrowdProcess(dataArray, program, onResults);
