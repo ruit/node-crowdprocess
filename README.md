@@ -44,7 +44,7 @@ This pretty much covers it. There are more [examples](https://github.com/CrowdPr
 
 ### Require and Authenticate
 
-```
+```javascript
 var credentials = require('./credentials');
 var CrowdProcess = require('..')(credentials);
 ```
@@ -94,14 +94,14 @@ CrowdProcess(dataArray, Run, onResults);
 
 If you choose to use a Readable stream, then you can either pass it as the first parameter:
 
-```
+```javascript
 var dataStream = new Readable();
 CrowdProcess(dataStream, Run, onResults);
 ```
 
 Or pipe it:
 
-```
+```javascript
 var dataStream = new Readable();
 dataStream.pipe(CrowdProcess(Run, onResults));
 ```
