@@ -156,6 +156,8 @@ If you don't listen for errors and they occur, an uncaught exception will be thr
 
 1. The Duplex stream exposed accepts and delivers [`objectMode`](http://nodejs.org/api/stream.html#stream_object_mode) streams, so you can't, for instance, pipe directly it to `process.stdout`. You need to pass them through a stringifier like [JSONStream](https://github.com/dominictarr/JSONStream) or [newline-json](https://github.com/CrowdProcess/newline-json)
 
+2. You cannot use `null` as input data. All streams used in this implementation are [Streams 2](http://blog.nodejs.org/2012/12/20/streams2/) and if you have a null inside your input data array or stream, somewhere along the implementation there will be a [`Readable.push(null)`](http://nodejs.org/api/stream.html#stream_readable_push_chunk_encoding), which closes the stream.
+
 ##Tests and Examples
 
 If you want to run tests and examples, create a `credentials.json` file in the root of this repository with your security credentials, that may be either `email` and `password` or `token`. They're the same object described [above](#require-and-authenticate).
