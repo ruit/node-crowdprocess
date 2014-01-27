@@ -33,7 +33,6 @@ var data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 CrowdProcess(data, Run, function (results) {
   console.log('results:', results);
 });
-
 ```
 
 Notice any [resemblance](https://github.com/caolan/async#map);
@@ -115,7 +114,6 @@ var dataArray = [1, 2, 3];
 CrowdProcess(dataArray, Run, function (results) {
   console.log('results: ', results);
 });
-
 ```
 
 If you don't want them buffered, don't pass the callback:
@@ -132,7 +130,6 @@ job.on('data', function (result) {
 job.on('end', function () {
   console.log('got all results!');
 });
-
 ```
 
 ### Listening for errors
@@ -147,7 +144,6 @@ var job = CrowdProcess(dataArray, Run);
 job.on('error', function (err) {
   console.error('oh no:', err);
 });
-
 ```
 
 If you don't listen for errors and they occur, an uncaught exception will be thrown.
