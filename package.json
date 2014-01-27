@@ -6,8 +6,8 @@
   "directories": {
     "example": "example"
   },
-  "scripts" : {
-    "test" : "tap test/all.js"
+  "scripts": {
+    "test": "tap test/mock.js"
   },
   "keywords": [
     "crowdprocess",

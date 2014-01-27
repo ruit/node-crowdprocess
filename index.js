@@ -60,12 +60,15 @@ function CrowdProcess(username, password) {
       opts.program = data;
     }
 
-    if (!opts.program && program instanceof Function) {
-      opts.program = program.toString();
+    if (!opts.program &&
+        (program instanceof Function ||
+         typeof program === string)) {
+      opts.program = program;
     }
 
-    if (!opts.program && typeof program === 'string') {
-      opts.program = program;
+    if (!opts.mock &&
+        opts.program instanceof Function) {
+      opts.program = opts.program.toString();
     }
 
     if (opts.program &&
@@ -101,25 +104,40 @@ function CrowdProcess(username, password) {
       self.inRStream.end();
     });
 
-    jobs.create({
-      program: opts.program,
-      group: opts.group,
-      bid: opts.bid
-    }, function (err, res) {
+    if (!opts.mock) {
+      jobs.create({
+        program: opts.program,
+        group: opts.group,
+        bid: opts.bid
+      }, onJobCreation);
+    } else {
+      process.nextTick(onJobCreation);
+    }
+
+    function onJobCreation (err, res) {
       if (err) throw new Error(err);
 
-      var id = res.id;
-      self.resultStream = streams(id).Results({ stream: true });
-      self.errorStream = streams(id).Errors({ stream: true });
-      self.taskStream = streams(id).Tasks();
+      if (!opts.mock) {
+        var id = res.id;
+        self.resultStream = streams(id).Results({ stream: true });
+        self.errorStream = streams(id).Errors({ stream: true });
+        self.taskStream = streams(id).Tasks();
 
-      self.inRStream.pipe(self.taskStream);
-      self.resultStream.pipe(self.outWStream);
+        self.inRStream.pipe(self.taskStream);
+        self.resultStream.pipe(self.outWStream);
+
+        self.errorStream.on('data', function (err) {
+          self.numResults++;
+          self.emit('error', err);
+          self._maybeClose();
+        });
+      }
 
       if (self.opts.data instanceof Stream) {
         self.opts.data.pipe(self);
         self.opts.data.on('end', function () {
           self.inRStream.end();
+          self.end();
         });
       }
 
@@ -140,70 +158,87 @@ function CrowdProcess(username, password) {
         });
       }
 
-      self.inRStream.on('end', function () {
-        if (self.numResults == self.numTasks) {
-          self.inRStream.end();
-          self.outWStream.end();
-          self.errorStream.end();
-          self.push(null);
-        }
+      self.outWStream.on('readable', function () {
+        self._read(0);
       });
 
       self.outWStream.on('end', function () {
         self.push(null);
       });
 
-      self.errorStream.on('data', function (err) {
-        self.numResults++;
-        self.emit('error', err);
-        if (self._writableState.ended && self.numResults == self.numTasks) {
-          self.resultStream.end();
-          self.errorStream.end();
-          self.inRStream.end();
-          self.push(null);
-          if (self.opts.onResults) {
-            self.opts.onResults(self.bufferedResults);
-          }
+      if (self.opts.mock) {
+        var program = self.opts.program;
+
+        if (typeof program === 'string') {
+          throw new Error('In mock mode, your program has to be a function.');
         }
-      });
-    });
+
+        self.inRStream.on('data', function (d) {
+          var result;
+          if (program.length === 2) {
+            program(d, onResult);
+          } else {
+            result = program(d);
+            onResult(result);
+          }
+
+          function onResult (result) {
+            process.nextTick(function () {
+              self.outWStream.write(result);
+            });
+          }
+        });
+      }
+    }
   }
 
   inherits(DuplexThrough, Duplex);
 
   DuplexThrough.prototype._write = _write;
   function _write (chunk, enc, cb) {
-    wrote = this.inRStream.write(chunk);
-    this.numTasks++;
-    if (wrote) {
+    var self = this;
+    self.numTasks++;
+    if (self.inRStream.write(chunk)) {
       cb();
+      self._maybeClose();
     } else {
-      this.inRStream.once('drain', cb);
+      self.inRStream.once('drain', cb);
     }
   }
 
-  DuplexThrough.prototype._read = function (n) {
+  DuplexThrough.prototype._read = _read;
+  function _read (n) {
     var self = this;
-    self.outWStream.once('readable', function () {
-      var chunk;
-      while (null !== (chunk = self.outWStream.read(n))) {
-        self.numResults++;
-        if (!self.push(chunk)) {
-          break;
-        }
-
-        if (self._writableState.ended && self.numResults == self.numTasks) {
-          self.resultStream.end();
-          self.errorStream.end();
-          self.inRStream.end();
-          self.push(null);
-          if (self.opts.onResults) {
-            self.opts.onResults(self.bufferedResults);
-          }
-        }
+    while (null !== (chunk = self.outWStream.read())) {
+      self.numResults++;
+      if (!self.push(chunk)) {
+        break;
       }
-    });
-  };
+
+      self._maybeClose();
+    }
+  }
+
+  DuplexThrough.prototype._maybeClose = _maybeClose;
+  function _maybeClose () {
+    var self = this;
+    if (self.ended) {
+      return;
+    }
+
+    if (self._writableState.ended && self.numResults == self.numTasks) {
+      self.ended = true;
+      if (!self.opts.mock) {
+        self.resultStream.end();
+        self.errorStream.end();
+      }
+      self.inRStream.end();
+      self.push(null);
+      if (self.opts.onResults) {
+        self.opts.onResults(self.bufferedResults);
+      }
+    }
+  }
 
   // legacy
   DuplexThrough.map = DuplexThrough;
