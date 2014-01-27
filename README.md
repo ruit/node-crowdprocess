@@ -152,7 +152,42 @@ job.on('error', function (err) {
 
 If you don't listen for errors and they occur, an uncaught exception will be thrown.
 
-##Caveats
+## Mock mode
+
+Mock mode allows you to use this module without actually creating a Job, sending input data and receiving results to and from CrowdProcess. Everything will happen locally. Whatever you pipe into the stream will be passed to your `Run` as an argument, and the output will be piped back to you.
+
+It's good if you're not sure you're using this module correctly or just don't want to be computing all the time during development.
+
+To use it, create the stream with an options object, and set `mock` to `true` as one of the options, like so:
+
+```javascript
+var dataArray = [1, 2, 3];
+
+function onResults (results) {
+  console.log('yay got some results:', results);
+}
+
+var job = CrowdProcess({
+  data: dataArray,
+  program: Run,
+  onResults: onResults,
+  mock: true
+});
+```
+
+It also works with the duplex stream:
+
+```javascript
+var job = CrowdProcess({
+  program: Run,
+  mock: true
+});
+
+dataStream.pipe(job).pipe(resultsStream);
+```
+
+
+## Caveats
 
 1. The Duplex stream exposed accepts and delivers [`objectMode`](http://nodejs.org/api/stream.html#stream_object_mode) streams, so you can't, for instance, pipe directly it to `process.stdout`. You need to pass them through a stringifier like [JSONStream](https://github.com/dominictarr/JSONStream) or [newline-json](https://github.com/CrowdProcess/newline-json)
 
@@ -160,9 +195,9 @@ If you don't listen for errors and they occur, an uncaught exception will be thr
 
 ##Tests and Examples
 
-If you want to run tests and examples, create a `credentials.json` file in the root of this repository with your security credentials, that may be either `email` and `password` or `token`. They're the same object described [above](#require-and-authenticate).
+If you run `npm test`, you'll be testing the module in [mock mode](#mock-mode). If you want to test this module's functionality with the live CrowdProcess platform, you have to create a `credentials.json` file in the root of this repository with your security credentials, that may be either `email` and `password` or `token`. They're the same object described [above](#require-and-authenticate), and then run `node test/all.js` to test the general functionality, and other files you'll find in the `test` directory.
 
-Don't worry, they will be [`.gitignore`d](https://github.com/CrowdProcess/node-crowdprocess/blob/master/.gitignore#L2).
+Don't worry, your `credentials.json` will be [`.gitignore`d](https://github.com/CrowdProcess/node-crowdprocess/blob/master/.gitignore#L2).
 
 
 ##Under the hood

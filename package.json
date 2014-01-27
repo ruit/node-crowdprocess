@@ -1,13 +1,13 @@
 {
   "name": "crowdprocess",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "description": "Distributed map in CrowdProcess",
   "main": "index.js",
   "directories": {
     "example": "example"
   },
-  "scripts" : {
-    "test" : "tap test/all.js"
+  "scripts": {
+    "test": "tap test/mock.js"
   },
   "keywords": [
     "crowdprocess",
