@@ -182,6 +182,31 @@ var job = CrowdProcess({
 dataStream.pipe(job).pipe(resultsStream);
 ```
 
+## Using a previously created job
+
+When you create a new job, the stream will emit a `created` event, where you can get the job's id, like this:
+
+```javascript
+
+var job = CrowdProcess(function Run (d) { return d; });
+
+var myJobsId;
+
+job.on('created', function (id) {
+  myJobsId = id; // save it for later
+  console.log('a job was created with id:', id);
+});
+```
+
+You can store this `id` and use it later to pipe some more data in and get some more results out, without creating a new job, by passing the `id` in the `id` option, like this:
+
+```javascript
+var newJobStream = CrowdProcess({
+  id: myJobsId // myJobsId was declared in the previous code block
+});
+```
+
+And then use it as you would if it was a new job.
 
 ## Caveats
 
