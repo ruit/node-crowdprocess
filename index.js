@@ -60,14 +60,23 @@ function CrowdProcess(username, password) {
       opts.program = data;
     }
 
+    if (Buffer.isBuffer(data)) {
+      opts.program = data.toString();
+    }
+
     if (!opts.program &&
         (program instanceof Function ||
-         typeof program === 'string')) {
+         typeof program === 'string' ||
+         Buffer.isBuffer(program))) {
       opts.program = program;
     }
 
     if (!opts.mock &&
         opts.program instanceof Function) {
+      opts.program = opts.program.toString();
+    }
+
+    if (Buffer.isBuffer(opts.program)) {
       opts.program = opts.program.toString();
     }
 
@@ -104,6 +113,15 @@ function CrowdProcess(username, password) {
       self.inRStream.end();
     });
 
+    if (opts.id) {
+      process.nextTick(function () {
+        onJobCreation(null, {
+          id: opts.id
+        });
+      });
+      return;
+    }
+
     if (!opts.mock) {
       jobs.create({
         program: opts.program,
@@ -115,10 +133,14 @@ function CrowdProcess(username, password) {
     }
 
     function onJobCreation (err, res) {
-      if (err) throw new Error(err);
+      if (err) {
+        self.emit('error', err);
+        return;
+      }
 
       if (!opts.mock) {
         var id = res.id;
+        self.emit('created', id);
         self.resultStream = streams(id).Results({ stream: true });
         self.errorStream = streams(id).Errors({ stream: true });
         self.taskStream = streams(id).Tasks();
