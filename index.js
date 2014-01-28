@@ -138,9 +138,11 @@ function CrowdProcess(username, password) {
         return;
       }
 
-      if (!opts.mock) {
+      if (!self.opts.mock) {
         var id = res.id;
-        self.emit('created', id);
+        if (!self.opts.id) {
+          self.emit('created', id);
+        }
         self.resultStream = streams(id).Results({ stream: true });
         self.errorStream = streams(id).Errors({ stream: true });
         self.taskStream = streams(id).Tasks();

@@ -34,7 +34,6 @@ test('create and compute', function (t) {
   });
 
   function onResults (results) {
-    console.log(results);
     t.equal(results.length, N);
     t.deepEqual(results.sort(), dataArray.sort());
     t.end();
