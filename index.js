@@ -62,7 +62,7 @@ function CrowdProcess(username, password) {
 
     if (!opts.program &&
         (program instanceof Function ||
-         typeof program === string)) {
+         typeof program === 'string')) {
       opts.program = program;
     }
 
