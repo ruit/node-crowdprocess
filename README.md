@@ -18,7 +18,7 @@ If you're not sure about how CrowdProcess works, you should go through [the guid
 npm install crowdprocess
 ```
 
-##Examples speek louder than words
+##Examples speak louder than words
 
 ```javascript
 var credentials = require('./credentials');
