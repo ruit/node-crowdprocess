@@ -119,17 +119,14 @@ function CrowdProcess(username, password) {
           id: opts.id
         });
       });
-      return;
-    }
-
-    if (!opts.mock) {
+    } else if (opts.mock) {
+      process.nextTick(onJobCreation);
+    } else {
       jobs.create({
         program: opts.program,
         group: opts.group,
         bid: opts.bid
       }, onJobCreation);
-    } else {
-      process.nextTick(onJobCreation);
     }
 
     function onJobCreation (err, res) {

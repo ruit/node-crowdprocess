@@ -105,6 +105,41 @@ var dataStream = new Readable();
 dataStream.pipe(CrowdProcess(Run, onResults));
 ```
 
+### The program
+
+A program is Javascript code that will run on [Web Workers](http://www.html5rocks.com/en/tutorials/workers/basics/).
+
+In this module, it may be specified as a function or a string. You'll want to specify it as a string if it has external dependencies (like using functions declared outside the `Run` function), so you can send all functions.
+
+That comes with some restrictions. It must be valid Javascript code, must only features available in the Worker scope (so there is no DOM, `window`, `document` and `parent` objects).
+
+Added to that, programs submitted to CrowdProcess must have a `Run` function. You must declare a function named `Run`, so that we can execute that in the web workers. Your input data elements will be passed as arguments (each one in a different worker and execution context).
+
+You may have more functions, but there must be at least one `Run` function that uses whatever you want to use, like this:
+
+```javascript
+function avg (X) { // will be used inside Run
+  var N = X.length;
+  var sum = 0;
+  for (var i = 0; i < N; i++) {
+    sum += X[i];
+  }
+  return sum / N;
+}
+
+function Run (X) { // calculate the standard deviation
+  var N = X.length;
+  var sum = 0;
+  var avgX = avg(X); // uses the avg function here
+  for (var i = 0; i < N; i++) {
+    sum += Math.pow(X[i] - avgX, 2);
+  }
+  return Math.sqrt(sum/(N-1));
+}
+```
+
+`[Browserify](http://browserify.org/)ed` code will run on CrowdProcess, as long as you use the standalone option set to `Run`, like `--standalone Run`. That means you can use lot's of node modules in CrowdProcess!
+
 ### Getting the results
 
 If you want the results to be buffered, just pass a callback:
