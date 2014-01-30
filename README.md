@@ -111,9 +111,9 @@ A program is Javascript code that will run on [Web Workers](http://www.html5rock
 
 In this module, it may be specified as a function or a string. You'll want to specify it as a string if it has external dependencies (like using functions declared outside the `Run` function), so you can send all functions.
 
-That comes with some restrictions. It must be valid Javascript code, must only features available in the Worker scope (so there is no DOM, `window`, `document` and `parent` objects). We also took away some dangerous objects like `XMLHTTPRequest`, `WebSocket`, `localStorage`, `Worker`, and others, for the obvious possible security/abuse issues.
+That comes with some restrictions. It must be valid Javascript code and must use only features available in the Worker scope (so there is no DOM, `window`, `document` and `parent` objects). We also took away some dangerous objects like `XMLHTTPRequest`, `WebSocket`, `localStorage`, `Worker`, and others, for the obvious possible security/abuse issues.
 
-Added to that, programs submitted to CrowdProcess must have a `Run` function. You must declare a function named `Run`, so that we can execute that in the web workers. Your input data elements will be passed as arguments (each one in a different worker and execution context).
+In addition, programs submitted to CrowdProcess must have a `Run` function. You must declare a function named `Run`, so that we can execute that in the web workers. Your input data elements will be passed as arguments (each one in a different worker and execution context).
 
 You may have more functions, but there must be at least one `Run` function that uses whatever you want to use, like this:
 
