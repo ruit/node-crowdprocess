@@ -1,6 +1,6 @@
 {
   "name": "crowdprocess",
-  "version": "0.5.8",
+  "version": "0.5.9",
   "description": "Distributed map in CrowdProcess",
   "main": "index.js",
   "directories": {
