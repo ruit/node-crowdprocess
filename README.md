@@ -235,7 +235,7 @@ job.on('created', function (id) {
 
 ## Pipe the results of one job, to another job
 
-Yes, you can pipe the results of one job to another, as with any Duplex stream. It's useful to build a job pipeline (`images.pipe(resize).pipe(applyBlackAndWhiteFilter).pipe(results)`) and if you have a group stream in the middle, you can pipe a map job to a reduce job that will take two or more results! This [test]() serves as an example.
+Yes, you can pipe the results of one job to another, as with any Duplex stream. It's useful to build a job pipeline (`images.pipe(resize).pipe(applyBlackAndWhiteFilter).pipe(results)`) and if you have a group stream in the middle, you can pipe a map job to a reduce job that will take two or more results! This [test](https://github.com/CrowdProcess/node-crowdprocess/blob/master/test/job1-pipe-job2.js#L30) serves as an example.
 
 You can store this `id` and use it later to pipe some more data in and get some more results out, without creating a new job, by passing the `id` in the `id` option, like this:
 
