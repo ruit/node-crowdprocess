@@ -167,7 +167,11 @@ function CrowdProcess(username, password) {
         var n = data.length;
         for (var i = 0; i < n; i++) {
           self.numTasks++;
-          self.inRStream.write(data[i]);
+          if (data[i] === null) { // just so it doesn't close the stream!
+            self.inRStream.write(0);
+          } else {
+            self.inRStream.write(data[i]);
+          }
         }
         self.inRStream.end();
         self.end();
